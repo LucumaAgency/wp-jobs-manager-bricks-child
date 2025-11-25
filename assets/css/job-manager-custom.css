@@ -251,12 +251,14 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 .job-card .company-logo {
     width: 60px;
     height: 60px;
-    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
 }
 
 .job-card .company-logo img {

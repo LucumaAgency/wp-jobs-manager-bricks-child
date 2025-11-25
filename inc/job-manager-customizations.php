@@ -26,12 +26,21 @@ function inspjob_bricks_job_manager_assets() {
             filemtime(get_stylesheet_directory() . '/assets/css/job-manager-custom.css')
         );
 
-        // JavaScript personalizado
+        // JavaScript personalizado - crear archivo si no existe
+        $js_file = get_stylesheet_directory() . '/assets/js/job-manager-custom.js';
+        if (!file_exists($js_file)) {
+            // Crear directorio si no existe
+            if (!file_exists(dirname($js_file))) {
+                wp_mkdir_p(dirname($js_file));
+            }
+        }
+
+        // Enqueue JavaScript
         wp_enqueue_script(
             'inspjob-job-manager-js',
             get_stylesheet_directory_uri() . '/assets/js/job-manager-custom.js',
             array('jquery'),
-            filemtime(get_stylesheet_directory() . '/assets/js/job-manager-custom.js'),
+            '1.0.1',
             true
         );
 
@@ -59,21 +68,29 @@ function inspjob_custom_job_fields($fields) {
     // Campo Salario Mínimo
     $fields['job']['job_salary_min'] = array(
         'label'       => 'Salario Mínimo (€)',
-        'type'        => 'number',
+        'type'        => 'text',
         'required'    => false,
         'placeholder' => 'ej. 30000',
-        'description' => 'Salario mínimo anual en euros',
-        'priority'    => 7
+        'description' => 'Salario mínimo anual en euros (solo números)',
+        'priority'    => 7,
+        'attributes'  => array(
+            'pattern' => '[0-9]*',
+            'inputmode' => 'numeric'
+        )
     );
 
     // Campo Salario Máximo
     $fields['job']['job_salary_max'] = array(
         'label'       => 'Salario Máximo (€)',
-        'type'        => 'number',
+        'type'        => 'text',
         'required'    => false,
         'placeholder' => 'ej. 50000',
-        'description' => 'Salario máximo anual en euros',
-        'priority'    => 8
+        'description' => 'Salario máximo anual en euros (solo números)',
+        'priority'    => 8,
+        'attributes'  => array(
+            'pattern' => '[0-9]*',
+            'inputmode' => 'numeric'
+        )
     );
 
     // Campo Experiencia
@@ -115,6 +132,53 @@ function inspjob_custom_job_fields($fields) {
         'type'        => 'checkbox',
         'required'    => false,
         'priority'    => 12
+    );
+
+    return $fields;
+}
+
+// Asegurar que los campos de salario se muestren correctamente
+add_filter('submit_job_form_fields_get_job_data', 'inspjob_populate_salary_fields', 10, 2);
+function inspjob_populate_salary_fields($fields, $job) {
+    if ($job) {
+        $fields['job']['job_salary_min']['value'] = get_post_meta($job->ID, '_job_salary_min', true);
+        $fields['job']['job_salary_max']['value'] = get_post_meta($job->ID, '_job_salary_max', true);
+    }
+    return $fields;
+}
+
+// Hook adicional para campos personalizados en admin
+add_filter('job_manager_job_listing_data_fields', 'inspjob_admin_fields');
+function inspjob_admin_fields($fields) {
+
+    $fields['_job_salary_min'] = array(
+        'label'       => __('Salario Mínimo (€)', 'inspjob'),
+        'type'        => 'text',
+        'placeholder' => __('ej. 30000', 'inspjob'),
+        'description' => __('Salario mínimo anual en euros', 'inspjob'),
+        'priority'    => 3.5
+    );
+
+    $fields['_job_salary_max'] = array(
+        'label'       => __('Salario Máximo (€)', 'inspjob'),
+        'type'        => 'text',
+        'placeholder' => __('ej. 50000', 'inspjob'),
+        'description' => __('Salario máximo anual en euros', 'inspjob'),
+        'priority'    => 3.6
+    );
+
+    $fields['_remote_work'] = array(
+        'label'       => __('Trabajo Remoto', 'inspjob'),
+        'type'        => 'checkbox',
+        'description' => __('Marcar si es trabajo remoto', 'inspjob'),
+        'priority'    => 4
+    );
+
+    $fields['_job_urgency'] = array(
+        'label'       => __('Contratación Urgente', 'inspjob'),
+        'type'        => 'checkbox',
+        'description' => __('Marcar si es urgente', 'inspjob'),
+        'priority'    => 4.1
     );
 
     return $fields;

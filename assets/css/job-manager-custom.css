@@ -202,7 +202,222 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     color: var(--primary-color);
 }
 
-/* Job Card Modern */
+/* ====================================
+   NUEVA ESTRUCTURA DE CARDS
+   Color principal: #164FC9
+   Fuente: Montserrat
+   ==================================== */
+
+.job-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    font-family: 'Montserrat', sans-serif !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 30px;
+}
+
+/* Header del card */
+.job-card .job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.job-card .company-logo {
+    width: 60px;
+    height: 60px;
+    background: #164FC9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.job-card .company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.job-card .company-logo .logo-placeholder {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Meta badges */
+.job-card .job-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.job-card .job-type,
+.job-card .job-remote,
+.job-card .job-onsite {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.job-card .job-type {
+    background: #EBF0FC;
+    color: #164FC9;
+}
+
+.job-card .job-remote {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.job-card .job-onsite {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Información principal */
+.job-card .job-title {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.job-card .job-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.job-card .job-title a:hover {
+    color: #164FC9;
+}
+
+.job-card .company-name {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: #4b5563;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+}
+
+.job-card .job-location {
+    margin: 0 0 12px 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.job-card .job-description {
+    margin-bottom: 16px;
+    color: #374151;
+    line-height: 1.5;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Tags de habilidades */
+.job-card .job-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.job-card .skill-tag {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Footer del card */
+.job-card .job-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.job-card .salary {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.job-card .btn-apply {
+    background: #164FC9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.job-card .btn-apply:hover {
+    background: #0F3A96;
+}
+
+/* Indicadores de urgente y destacado */
+.job-card .urgent-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.job-card .featured-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    background: #fbbf24;
+    border-radius: 50%;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* Job Card Modern - mantener compatibilidad */
 .job-card-modern {
     padding: 1.5rem;
     position: relative;

@@ -56,13 +56,24 @@ add_theme_support('job-manager-templates');
 add_filter('submit_job_form_fields', 'inspjob_custom_job_fields');
 function inspjob_custom_job_fields($fields) {
 
-    // Campo Salario
-    $fields['job']['job_salary'] = array(
-        'label'       => 'Salario',
-        'type'        => 'text',
+    // Campo Salario Mínimo
+    $fields['job']['job_salary_min'] = array(
+        'label'       => 'Salario Mínimo (€)',
+        'type'        => 'number',
         'required'    => false,
-        'placeholder' => 'ej. €30,000 - €50,000',
+        'placeholder' => 'ej. 30000',
+        'description' => 'Salario mínimo anual en euros',
         'priority'    => 7
+    );
+
+    // Campo Salario Máximo
+    $fields['job']['job_salary_max'] = array(
+        'label'       => 'Salario Máximo (€)',
+        'type'        => 'number',
+        'required'    => false,
+        'placeholder' => 'ej. 50000',
+        'description' => 'Salario máximo anual en euros',
+        'priority'    => 8
     );
 
     // Campo Experiencia
@@ -78,7 +89,7 @@ function inspjob_custom_job_fields($fields) {
             'senior'  => '5-10 años',
             'expert'  => '10+ años'
         ),
-        'priority'    => 8
+        'priority'    => 9
     );
 
     // Campo Beneficios
@@ -87,7 +98,7 @@ function inspjob_custom_job_fields($fields) {
         'type'        => 'textarea',
         'required'    => false,
         'placeholder' => 'Lista los beneficios del puesto...',
-        'priority'    => 9
+        'priority'    => 10
     );
 
     // Campo Trabajo Remoto
@@ -95,7 +106,7 @@ function inspjob_custom_job_fields($fields) {
         'label'       => '¿Trabajo Remoto Disponible?',
         'type'        => 'checkbox',
         'required'    => false,
-        'priority'    => 10
+        'priority'    => 11
     );
 
     // Campo Urgente
@@ -103,7 +114,7 @@ function inspjob_custom_job_fields($fields) {
         'label'       => '¿Contratación Urgente?',
         'type'        => 'checkbox',
         'required'    => false,
-        'priority'    => 11
+        'priority'    => 12
     );
 
     return $fields;
@@ -113,8 +124,12 @@ function inspjob_custom_job_fields($fields) {
 add_action('job_manager_update_job_data', 'inspjob_save_custom_fields', 10, 2);
 function inspjob_save_custom_fields($job_id, $values) {
 
-    if (isset($values['job']['job_salary'])) {
-        update_post_meta($job_id, '_job_salary', sanitize_text_field($values['job']['job_salary']));
+    if (isset($values['job']['job_salary_min'])) {
+        update_post_meta($job_id, '_job_salary_min', absint($values['job']['job_salary_min']));
+    }
+
+    if (isset($values['job']['job_salary_max'])) {
+        update_post_meta($job_id, '_job_salary_max', absint($values['job']['job_salary_max']));
     }
 
     if (isset($values['job']['job_experience'])) {
@@ -139,11 +154,21 @@ add_action('single_job_listing_meta_end', 'inspjob_display_custom_fields');
 function inspjob_display_custom_fields() {
     global $post;
 
-    $salary = get_post_meta($post->ID, '_job_salary', true);
+    $salary_min = get_post_meta($post->ID, '_job_salary_min', true);
+    $salary_max = get_post_meta($post->ID, '_job_salary_max', true);
     $experience = get_post_meta($post->ID, '_job_experience', true);
 
-    if ($salary) {
-        echo '<li class="job-salary"><strong>Salario:</strong> ' . esc_html($salary) . '</li>';
+    // Mostrar rango salarial
+    if ($salary_min || $salary_max) {
+        $salary_display = '';
+        if ($salary_min && $salary_max) {
+            $salary_display = '€' . number_format($salary_min, 0, ',', '.') . ' - €' . number_format($salary_max, 0, ',', '.');
+        } elseif ($salary_min) {
+            $salary_display = 'Desde €' . number_format($salary_min, 0, ',', '.');
+        } elseif ($salary_max) {
+            $salary_display = 'Hasta €' . number_format($salary_max, 0, ',', '.');
+        }
+        echo '<li class="job-salary"><strong>Salario:</strong> ' . esc_html($salary_display) . '</li>';
     }
 
     if ($experience) {

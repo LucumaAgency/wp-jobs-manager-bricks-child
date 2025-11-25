@@ -1571,3 +1571,476 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     color: #c62828;
     border-left: 4px solid #c62828;
 }
+
+/* ====================================
+   SINGLE JOB - DISEÑO 2 COLUMNAS
+   Meta info en card a la derecha
+   ==================================== */
+
+.single-job-listing {
+    background: #f5f7fa;
+    min-height: 100vh;
+    font-family: var(--font-primary);
+    padding: 2rem 0;
+}
+
+.single-job-listing .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header del trabajo */
+.single-job-header {
+    background: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.08);
+}
+
+.single-job-header .job-badges-top {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.single-job-header .badge-urgent,
+.single-job-header .badge-featured {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.single-job-header .badge-urgent {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+}
+
+.single-job-header .badge-urgent svg,
+.single-job-header .badge-featured svg {
+    width: 16px;
+    height: 16px;
+}
+
+.single-job-header .badge-featured {
+    background: linear-gradient(135deg, #164FC9, #4B75D6);
+    color: white;
+}
+
+.single-job-header h1.job-title {
+    font-size: 2rem;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.single-job-header .job-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.single-job-header .company-name {
+    color: #164FC9;
+    font-weight: 600;
+}
+
+.single-job-header .separator {
+    color: #d1d5db;
+}
+
+/* Aviso de trabajo expirado */
+.job-expired-notice {
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.job-expired-notice svg {
+    color: #dc2626;
+    flex-shrink: 0;
+}
+
+.job-expired-notice p {
+    margin: 0;
+    color: #991b1b;
+    font-weight: 500;
+}
+
+/* Contenido principal - Grid de 2 columnas */
+.single-job-content .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Columna izquierda - Contenido principal */
+.content-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.content-section {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.05);
+}
+
+.content-section h2 {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #164FC9;
+}
+
+.job-description {
+    color: #4b5563;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.job-description ul,
+.job-description ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.job-description li {
+    margin-bottom: 0.5rem;
+}
+
+.benefits-content {
+    color: #4b5563;
+    line-height: 1.8;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.skill-tag-large {
+    background: linear-gradient(135deg, #164FC9, #4B75D6);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Columna derecha - Sidebar con cards */
+.content-sidebar {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Card de meta información */
+.job-meta-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px rgba(22, 79, 201, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+/* Sección de empresa */
+.company-section {
+    text-align: center;
+    padding-bottom: 1.5rem;
+}
+
+.company-logo-large {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    background: #164FC9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.company-logo-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.company-logo-large .logo-placeholder {
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.company-section h3 {
+    color: #1f2937;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.company-tagline {
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.company-website {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #164FC9;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.company-website:hover {
+    text-decoration: underline;
+}
+
+.company-website svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Divisor */
+.meta-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 1.5rem 0;
+}
+
+/* Lista de información del trabajo */
+.job-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.info-item svg {
+    width: 20px;
+    height: 20px;
+    color: #164FC9;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.info-item > div {
+    flex: 1;
+}
+
+.info-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.info-value {
+    display: block;
+    color: #1f2937;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.info-value.highlight {
+    color: #164FC9;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Sección de aplicar */
+.apply-section {
+    padding-top: 1.5rem;
+}
+
+.apply-section .application_button,
+.apply-section .application-button {
+    width: 100%;
+    background: #164FC9;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+
+.apply-section .application_button:hover,
+.apply-section .application-button:hover {
+    background: #0F3A96;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(22, 79, 201, 0.3);
+}
+
+/* Sección de compartir */
+.share-section {
+    padding-top: 1.5rem;
+}
+
+.share-title {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.share-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.share-btn:hover {
+    background: #164FC9;
+    transform: translateY(-2px);
+}
+
+.share-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #6b7280;
+    transition: var(--transition);
+}
+
+.share-btn:hover svg {
+    fill: white;
+}
+
+/* Card de trabajos relacionados */
+.related-jobs-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.05);
+}
+
+.related-jobs-card h3 {
+    color: #1f2937;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.related-jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.related-job {
+    display: block;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.related-job:hover {
+    background: #EBF0FC;
+    border-color: #164FC9;
+}
+
+.related-job h4 {
+    color: #1f2937;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.related-job:hover h4 {
+    color: #164FC9;
+}
+
+.related-company {
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.related-location {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+/* Responsive para single job */
+@media (max-width: 1024px) {
+    .single-job-content .content-grid {
+        grid-template-columns: 1fr 320px;
+    }
+}
+
+@media (max-width: 768px) {
+    .single-job-content .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-sidebar {
+        position: static;
+    }
+
+    .single-job-header h1.job-title {
+        font-size: 1.5rem;
+    }
+
+    .single-job-header .job-header-meta {
+        flex-wrap: wrap;
+    }
+}

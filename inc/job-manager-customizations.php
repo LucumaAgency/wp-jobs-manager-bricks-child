@@ -253,33 +253,96 @@ function inspjob_display_custom_fields() {
  * FILTROS DE BÚSQUEDA PERSONALIZADOS
  * ===================================
  */
-add_action('job_manager_job_filters_before', 'inspjob_custom_filters');
-function inspjob_custom_filters($atts) {
-    ?>
-    <div class="search_salary">
-        <label for="search_salary">Rango Salarial</label>
-        <select name="filter_salary" id="search_salary" class="job-manager-filter">
-            <option value="">Cualquier salario</option>
-            <option value="0-30000">€0 - €30,000</option>
-            <option value="30000-50000">€30,000 - €50,000</option>
-            <option value="50000-70000">€50,000 - €70,000</option>
-            <option value="70000-100000">€70,000 - €100,000</option>
-            <option value="100000+">€100,000+</option>
-        </select>
-    </div>
 
-    <div class="search_experience">
-        <label for="search_experience">Experiencia</label>
-        <select name="filter_experience" id="search_experience" class="job-manager-filter">
-            <option value="">Cualquier experiencia</option>
-            <option value="entry">Sin experiencia</option>
-            <option value="junior">1-2 años</option>
-            <option value="mid">3-5 años</option>
-            <option value="senior">5-10 años</option>
-            <option value="expert">10+ años</option>
-        </select>
-    </div>
-    <?php
+// Filtrar trabajos por experiencia
+add_filter('job_manager_get_listings', 'inspjob_filter_by_experience', 10, 2);
+function inspjob_filter_by_experience($query_args, $args) {
+    if (!empty($_GET['search_experience'])) {
+        $query_args['meta_query'][] = array(
+            'key'     => '_job_experience',
+            'value'   => sanitize_text_field($_GET['search_experience']),
+            'compare' => '='
+        );
+    }
+    return $query_args;
+}
+
+// Filtrar trabajos por rango salarial
+add_filter('job_manager_get_listings', 'inspjob_filter_by_salary', 10, 2);
+function inspjob_filter_by_salary($query_args, $args) {
+    if (!empty($_GET['search_salary'])) {
+        $salary_range = sanitize_text_field($_GET['search_salary']);
+
+        // Parsear el rango salarial
+        if ($salary_range === '0-20000') {
+            $min = 0;
+            $max = 20000;
+        } elseif ($salary_range === '20000-30000') {
+            $min = 20000;
+            $max = 30000;
+        } elseif ($salary_range === '30000-40000') {
+            $min = 30000;
+            $max = 40000;
+        } elseif ($salary_range === '40000-60000') {
+            $min = 40000;
+            $max = 60000;
+        } elseif ($salary_range === '60000-80000') {
+            $min = 60000;
+            $max = 80000;
+        } elseif ($salary_range === '80000+') {
+            $min = 80000;
+            $max = 999999999;
+        } else {
+            return $query_args;
+        }
+
+        // Filtrar por salario mínimo o máximo dentro del rango
+        $query_args['meta_query'][] = array(
+            'relation' => 'OR',
+            array(
+                'key'     => '_job_salary_min',
+                'value'   => array($min, $max),
+                'type'    => 'NUMERIC',
+                'compare' => 'BETWEEN'
+            ),
+            array(
+                'key'     => '_job_salary_max',
+                'value'   => array($min, $max),
+                'type'    => 'NUMERIC',
+                'compare' => 'BETWEEN'
+            )
+        );
+    }
+    return $query_args;
+}
+
+// Filtrar trabajos remotos
+add_filter('job_manager_get_listings', 'inspjob_filter_by_remote', 10, 2);
+function inspjob_filter_by_remote($query_args, $args) {
+    if (!empty($_GET['search_remote']) && $_GET['search_remote'] == '1') {
+        $query_args['meta_query'][] = array(
+            'key'     => '_remote_work',
+            'value'   => '1',
+            'compare' => '='
+        );
+    }
+    return $query_args;
+}
+
+// Filtrar por tipo de trabajo (checkbox múltiple)
+add_filter('job_manager_get_listings', 'inspjob_filter_by_job_types', 10, 2);
+function inspjob_filter_by_job_types($query_args, $args) {
+    if (!empty($_GET['search_job_type']) && is_array($_GET['search_job_type'])) {
+        $job_types = array_map('sanitize_text_field', $_GET['search_job_type']);
+
+        $query_args['tax_query'][] = array(
+            'taxonomy' => 'job_listing_type',
+            'field'    => 'slug',
+            'terms'    => $job_types,
+            'operator' => 'IN'
+        );
+    }
+    return $query_args;
 }
 
 /**

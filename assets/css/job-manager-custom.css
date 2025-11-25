@@ -306,25 +306,31 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     color: #92400e;
 }
 
+/* Link que envuelve todo el card */
+a.job-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+a.job-card-link:hover {
+    text-decoration: none;
+}
+
 /* Información principal - Tamaños de fuente optimizados */
 .job-card .job-title {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px 0; /* Sin margen izquierdo */
+    padding: 0; /* Sin padding */
     font-size: var(--font-size-title);
     font-weight: 700;
     color: #1f2937;
     font-family: var(--font-primary);
     line-height: 1.3;
+    text-align: left; /* Alineación a la izquierda */
 }
 
-.job-card .job-title a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.job-card .job-title a:hover {
-    color: #164FC9;
-}
+/* Ya no necesitamos estilos para el link dentro del título */
 
 .job-card .company-name {
     margin: 0 0 4px 0;
@@ -396,11 +402,10 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     cursor: pointer;
     transition: background 0.2s;
     font-family: 'Montserrat', sans-serif;
-    text-decoration: none;
     display: inline-block;
 }
 
-.job-card .btn-apply:hover {
+a.job-card-link:hover .btn-apply {
     background: #0F3A96;
 }
 

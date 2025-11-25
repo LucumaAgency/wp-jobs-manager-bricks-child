@@ -59,6 +59,7 @@ $categories = get_the_terms($post->ID, 'job_listing_category');
 
 <li <?php job_listing_class('job-listing-card'); ?> data-longitude="<?php echo esc_attr($post->geolocation_lat); ?>" data-latitude="<?php echo esc_attr($post->geolocation_long); ?>">
 
+    <a href="<?php the_job_permalink(); ?>" class="job-card-link">
     <div class="job-card">
 
         <!-- Header con logo y badges -->
@@ -86,9 +87,7 @@ $categories = get_the_terms($post->ID, 'job_listing_category');
 
         <!-- Información principal del trabajo -->
         <h3 class="job-title">
-            <a href="<?php the_job_permalink(); ?>">
-                <?php wpjm_the_job_title(); ?>
-            </a>
+            <?php wpjm_the_job_title(); ?>
         </h3>
 
         <p class="company-name">
@@ -134,9 +133,9 @@ $categories = get_the_terms($post->ID, 'job_listing_category');
                 <span class="salary">Salario competitivo</span>
             <?php endif; ?>
 
-            <a href="<?php the_job_permalink(); ?>" class="btn-apply">
+            <span class="btn-apply">
                 Aplicar
-            </a>
+            </span>
         </div>
 
         <?php if ($urgency) : ?>
@@ -148,5 +147,6 @@ $categories = get_the_terms($post->ID, 'job_listing_category');
         <?php endif; ?>
 
     </div>
+    </a>
 
 </li>

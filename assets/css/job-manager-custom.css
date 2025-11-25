@@ -755,6 +755,21 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     grid-column: 2;
 }
 
+/* Estilos adicionales para compatibilidad */
+.job_filters .search_jobs div.filter_first,
+.job_filters .search_jobs div.search_keywords {
+    float: none;
+    padding-right: 0.5em;
+    width: 100%;
+}
+
+.job_filters .search_jobs div.filter_last,
+.job_filters .search_jobs div.search_location {
+    float: none;
+    padding-left: 0.5em;
+    width: 100%;
+}
+
 /* Labels de todos los campos */
 .job_filters label {
     color: white;
@@ -1759,6 +1774,25 @@ nav.job-manager-pagination {
     padding: 3rem;
     color: var(--text-color);
     font-family: var(--font-primary);
+}
+
+/* CSS solicitado - Overrides específicos */
+.job_filters .search_jobs div.filter_first,
+.job_filters .search_jobs div.search_keywords {
+    float: left;
+    padding-right: .5em;
+    width: 100%;
+}
+
+.job_filters .search_jobs div.filter_last,
+.job_filters .search_jobs div.search_location {
+    float: right;
+    padding-left: .5em;
+    width: 100%;
+}
+
+.showing_jobs {
+    display: none !important;
 }
 
 .job-listings-loading:before {

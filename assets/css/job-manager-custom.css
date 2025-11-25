@@ -251,7 +251,6 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 .job-card .company-logo {
     width: 60px;
     height: 60px;
-    background: #164FC9;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -387,7 +386,7 @@ a.job-card-link:hover {
 .job-card .salary {
     font-weight: 700;
     color: #1f2937;
-    font-size: 1rem; /* Reducido de 1.1rem */
+    font-size: 1.15rem; /* Incrementado ligeramente */
     font-family: 'Montserrat', sans-serif;
 }
 

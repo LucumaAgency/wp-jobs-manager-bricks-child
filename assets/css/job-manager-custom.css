@@ -259,16 +259,39 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     background: none;
 }
 
-/* La imagen que genera the_company_logo() */
+/* La imagen que genera the_company_logo() - Override completo de estilos */
 .job-card .company-logo img,
-.job-card .company-logo .company_logo {
+.job-card .company-logo .company_logo,
+.job-card .company-logo img.company_logo,
+li.job_listing .company-logo img,
+.job_listings .company-logo img,
+.job-listing-card .company-logo img {
     width: 60px !important;
     height: 60px !important;
-    object-fit: contain;
-    display: block;
-    margin: 0;
-    padding: 0;
-    position: static;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+    float: none !important;
+    left: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    vertical-align: initial !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* Override específico para img.company_logo con cualquier estilo inline */
+img.company_logo[style] {
+    position: static !important;
+    float: none !important;
+    left: auto !important;
+    margin: 0 !important;
 }
 
 .job-card .company-logo .logo-placeholder {

@@ -1795,6 +1795,20 @@ nav.job-manager-pagination {
     display: none !important;
 }
 
+.job_filters .search_jobs {
+    gap: 10px 20px;
+}
+
+.job_filters .search_jobs div.search_submit {
+    padding-top: 5px;
+}
+
+.job_filters input[type="submit"],
+.job_filters .submit,
+.job_filters button[type="submit"] {
+    margin-top: 5px;
+}
+
 .job-listings-loading:before {
     content: "";
     display: inline-block;

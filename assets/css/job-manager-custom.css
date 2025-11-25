@@ -2344,3 +2344,9 @@ nav.job-manager-pagination {
         flex-wrap: wrap;
     }
 }
+
+/* Remover border-top de las listas de trabajos */
+.rp4wp-related-job_listing > ul,
+ul.job_listings {
+    border-top: none !important;
+}

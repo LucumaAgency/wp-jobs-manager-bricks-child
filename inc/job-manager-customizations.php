@@ -250,6 +250,43 @@ function inspjob_display_custom_fields() {
 }
 
 /**
+ * OVERRIDE DE TEMPLATES
+ * =====================
+ */
+
+// Asegurar que WP Job Manager use nuestros templates personalizados
+add_filter('job_manager_locate_template', 'inspjob_locate_template', 10, 3);
+function inspjob_locate_template($template, $template_name, $template_path) {
+    $custom_template = get_stylesheet_directory() . '/job_manager/' . $template_name;
+
+    if (file_exists($custom_template)) {
+        return $custom_template;
+    }
+
+    return $template;
+}
+
+// Shortcode personalizado para mostrar trabajos con nuestro diseño
+add_shortcode('inspjob_listings', 'inspjob_listings_shortcode');
+function inspjob_listings_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'per_page' => 12,
+        'orderby' => 'featured',
+        'order' => 'DESC',
+        'show_filters' => true,
+        'show_categories' => true,
+        'show_pagination' => true
+    ), $atts);
+
+    ob_start();
+
+    // Incluir nuestro template personalizado
+    include(get_stylesheet_directory() . '/job_manager/job-listings.php');
+
+    return ob_get_clean();
+}
+
+/**
  * FILTROS DE BÚSQUEDA PERSONALIZADOS
  * ===================================
  */

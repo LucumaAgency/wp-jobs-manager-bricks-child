@@ -251,9 +251,7 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 .job-card .company-logo {
     width: 60px;
     height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     overflow: hidden;
     flex-shrink: 0;
     margin: 0;
@@ -261,10 +259,15 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     background: none;
 }
 
-.job-card .company-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+/* La imagen que genera the_company_logo() */
+.job-card .company-logo img,
+.job-card .company-logo .company_logo {
+    width: 60px !important;
+    height: 60px !important;
+    object-fit: contain;
+    display: block;
+    margin: 0;
+    padding: 0;
 }
 
 .job-card .company-logo .logo-placeholder {

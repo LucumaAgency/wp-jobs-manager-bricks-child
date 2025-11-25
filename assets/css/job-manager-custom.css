@@ -722,11 +722,8 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 
 .modern-filters-fullwidth {
     background: linear-gradient(135deg, #164FC9 0%, #0F3A96 100%);
-    padding: 0;
-    margin: 0 -50vw;
-    margin-left: 50%;
-    margin-right: 50%;
-    width: 100vw;
+    width: 100%;
+    padding: 3rem 0;
     position: relative;
     box-shadow: 0 10px 40px rgba(22, 79, 201, 0.15);
     border-radius: 0;
@@ -734,9 +731,9 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 }
 
 .modern-filters-fullwidth .filters-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
+    width: 100%;
+    max-width: none;
+    padding: 0 2rem;
 }
 
 /* Header de filtros */
@@ -1066,8 +1063,12 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 }
 
 @media (max-width: 768px) {
+    .modern-filters-fullwidth {
+        padding: 2rem 0;
+    }
+
     .modern-filters-fullwidth .filters-container {
-        padding: 2rem 1rem;
+        padding: 0 1rem;
     }
 
     .filters-title {

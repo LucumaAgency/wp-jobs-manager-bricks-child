@@ -285,11 +285,27 @@ if ($company_name) {
                             <div class="meta-divider"></div>
 
                             <!-- Botón de aplicar -->
-                            <?php if (candidates_can_apply()) : ?>
-                                <div class="apply-section">
+                            <div class="apply-section">
+                                <?php if (candidates_can_apply()) : ?>
                                     <?php get_job_manager_template('job-application.php'); ?>
-                                </div>
-                            <?php endif; ?>
+                                <?php else : ?>
+                                    <?php
+                                    $application = get_the_job_application_method();
+                                    if (!empty($application)) : ?>
+                                        <div class="application">
+                                            <a href="<?php echo esc_url($application); ?>" class="application_button button" target="_blank">
+                                                Aplicar a este trabajo
+                                            </a>
+                                        </div>
+                                    <?php else : ?>
+                                        <div class="application">
+                                            <a href="<?php the_job_permalink(); ?>" class="application_button button">
+                                                Ver detalles del trabajo
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
 
                         </div>
 

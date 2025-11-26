@@ -2356,3 +2356,39 @@ nav.job-manager-pagination {
 ul.job_listings {
     border-top: none !important;
 }
+
+/* Apply section - Botón de aplicar */
+.apply-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+}
+
+.apply-section .application {
+    text-align: center;
+}
+
+.apply-section .application_button {
+    display: inline-block;
+    background: #164FC9;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.apply-section .application_button:hover {
+    background: #0F3A96;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 79, 201, 0.3);
+}
+
+.apply-section .application_details {
+    margin-top: 1rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.9rem;
+}

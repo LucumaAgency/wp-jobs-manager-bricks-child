@@ -811,7 +811,10 @@ a.job-card-link:hover .btn-apply {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    display: block;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Inputs de texto principales */
@@ -890,13 +893,7 @@ a.job-card-link:hover .btn-apply {
     padding: 0.5rem 1rem;
     border-radius: 3px;
     transition: var(--transition);
-    border: 2px solid #e5e7eb;
     list-style: none;
-}
-
-.job_filters ul.job_types li:hover {
-    background: #EBF0FC;
-    border-color: #164FC9;
 }
 
 .job_filters ul.job_types input[type="checkbox"] {

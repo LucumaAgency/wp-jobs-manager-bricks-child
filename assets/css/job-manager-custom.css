@@ -2345,3 +2345,9 @@ nav.job-manager-pagination {
 ul.job_listings {
     border-top: none !important;
 }
+
+/* Tamaño de fuente para h3 en job listings */
+.job_listings li.job_listing .position h3,
+.job_listings li.job_listing h3 {
+    font-size: 18px;
+}

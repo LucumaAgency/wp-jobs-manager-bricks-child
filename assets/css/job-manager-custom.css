@@ -155,7 +155,7 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 /* Título del trabajo en cards */
 .job_listings li.job_listing .position h3,
 .job_listings li.job_listing h3 {
-    font-size: 1.25rem !important;
+    font-size: 18px !important;
     margin-bottom: 0.5rem !important;
     font-weight: 600 !important;
     font-family: var(--font-primary) !important;
@@ -2344,10 +2344,4 @@ nav.job-manager-pagination {
 .rp4wp-related-job_listing > ul,
 ul.job_listings {
     border-top: none !important;
-}
-
-/* Tamaño de fuente para h3 en job listings */
-.job_listings li.job_listing .position h3,
-.job_listings li.job_listing h3 {
-    font-size: 18px;
 }

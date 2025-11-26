@@ -344,10 +344,11 @@ a.job-card-link:hover {
 }
 
 /* Información principal - Tamaños de fuente optimizados */
-.job-card .job-title {
+.job-card .job-title,
+.job-card h3.job-title {
     margin: 0 0 8px 0; /* Sin margen izquierdo */
     padding: 0; /* Sin padding */
-    font-size: 20px;
+    font-size: 20px !important;
     font-weight: 700;
     color: #1f2937;
     font-family: var(--font-primary);

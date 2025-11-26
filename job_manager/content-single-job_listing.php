@@ -191,7 +191,9 @@ if ($company_name) {
                             <div class="job-info-list">
 
                                 <!-- Tipo de trabajo -->
-                                <?php if (get_the_job_types()) : ?>
+                                <?php
+                                $types = wpjm_get_the_job_types();
+                                if (!empty($types)) : ?>
                                     <div class="info-item">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -199,7 +201,6 @@ if ($company_name) {
                                         </svg>
                                         <div>
                                             <span class="info-label">Tipo de empleo</span>
-                                            <?php $types = wpjm_get_the_job_types(); ?>
                                             <span class="info-value">
                                                 <?php foreach($types as $type) : ?>
                                                     <?php echo esc_html($type->name); ?>

@@ -224,11 +224,8 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 
 .job-card {
     background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
     width: 100%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s;
     font-family: 'Montserrat', sans-serif !important;
     height: 100%;
     display: flex;
@@ -237,7 +234,6 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
 
 .job-card:hover {
     transform: translateY(-5px);
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 30px;
 }
 
 /* Header del card */
@@ -339,7 +335,8 @@ a.job-card-link {
     text-decoration: none;
     color: inherit;
     display: block;
-    height: 100%;
+    width: 350px;
+    height: 400px;
 }
 
 a.job-card-link:hover {
@@ -350,7 +347,7 @@ a.job-card-link:hover {
 .job-card .job-title {
     margin: 0 0 8px 0; /* Sin margen izquierdo */
     padding: 0; /* Sin padding */
-    font-size: var(--font-size-title);
+    font-size: 20px;
     font-weight: 700;
     color: #1f2937;
     font-family: var(--font-primary);
@@ -379,7 +376,7 @@ a.job-card-link:hover {
 .job-card .job-description {
     margin-bottom: 16px;
     color: #374151;
-    font-size: 0.95rem; /* Tamaño específico para descripción */
+    font-size: 14px;
     line-height: 1.6;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;

@@ -1877,6 +1877,7 @@ nav.job-manager-pagination {
     min-height: 100vh;
     font-family: var(--font-primary);
     padding: 2rem 0;
+    width: 100%;
 }
 
 .single-job-listing .container {
@@ -1893,6 +1894,15 @@ nav.job-manager-pagination {
     margin-bottom: 2rem;
     border-radius: var(--border-radius);
     box-shadow: 0 2px 10px rgba(22, 79, 201, 0.08);
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.single-job-content {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .single-job-header .job-badges-top {

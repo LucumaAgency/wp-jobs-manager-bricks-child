@@ -148,7 +148,7 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     width: 60px !important;
     height: 60px !important;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 3px;
     margin-bottom: 1rem;
 }
 
@@ -301,11 +301,15 @@ img.company_logo[style] {
 .job-card .job-meta {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
 .job-card .job-type,
 .job-card .job-remote,
 .job-card .job-onsite {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.75rem; /* Tamaño específico para badges */
@@ -313,6 +317,7 @@ img.company_logo[style] {
     font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    line-height: 1;
 }
 
 .job-card .job-type {

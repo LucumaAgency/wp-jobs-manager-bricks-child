@@ -767,9 +767,12 @@ a.job-card-link:hover .btn-apply {
 .job_filters .search_jobs {
     display: grid;
     gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    grid-template-columns: 60% 40%; /* 2 columnas: 60% keywords, 40% location */
+    max-width: 100%;
+    margin: 15px 0px !important;
+    grid-template-columns: 60% 40%;
+    justify-content: start;
+    align-items: center;
+    align-content: center;
 }
 
 /* FILA 1: Keywords y Location */

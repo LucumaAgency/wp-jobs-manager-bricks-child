@@ -1561,6 +1561,86 @@ a.job-card-link:hover .btn-apply {
 }
 
 /* ====================================
+   FORMULARIO DE APLICACIÓN
+   ==================================== */
+
+.job-manager-application-form.job-manager-form {
+    font-family: var(--font-primary);
+}
+
+.job-manager-application-form.job-manager-form fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.job-manager-application-form.job-manager-form .field {
+    margin-bottom: 1.5rem;
+}
+
+.job-manager-application-form.job-manager-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+    font-family: var(--font-primary);
+    text-align: left;
+}
+
+.job-manager-application-form.job-manager-form .field input[type="text"],
+.job-manager-application-form.job-manager-form .field input[type="email"],
+.job-manager-application-form.job-manager-form .field input[type="url"],
+.job-manager-application-form.job-manager-form .field input[type="tel"],
+.job-manager-application-form.job-manager-form .field textarea,
+.job-manager-application-form.job-manager-form .field select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    transition: var(--transition);
+    box-sizing: border-box;
+}
+
+.job-manager-application-form.job-manager-form .field input:focus,
+.job-manager-application-form.job-manager-form .field textarea:focus,
+.job-manager-application-form.job-manager-form .field select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(22, 79, 201, 0.1);
+}
+
+/* Botón de enviar aplicación - Estilos Bricks */
+.wp_job_manager_send_application_button,
+input.wp_job_manager_send_application_button,
+button.wp_job_manager_send_application_button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.wp_job_manager_send_application_button:hover,
+input.wp_job_manager_send_application_button:hover,
+button.wp_job_manager_send_application_button:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-2px);
+    color: white !important;
+}
+
+/* ====================================
    MENSAJES Y NOTIFICACIONES
    ==================================== */
 

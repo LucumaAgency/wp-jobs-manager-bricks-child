@@ -110,8 +110,8 @@ ul.job_listings li.job_listing,
 .job_listings .job_listing,
 ul.job_listings > li,
 .job_listings > li {
-    flex: 0 1 calc(33.333% - 1.5rem) !important; /* 3 columnas */
-    max-width: calc(33.333% - 1.5rem) !important;
+    flex: 0 1 calc(25% - 1.5rem) !important; /* 4 columnas */
+    max-width: calc(25% - 1.5rem) !important;
     list-style: none !important;
     margin: 0 !important;
     padding: 0 !important;

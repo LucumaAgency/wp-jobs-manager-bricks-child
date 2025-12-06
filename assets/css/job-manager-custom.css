@@ -230,6 +230,7 @@ ul.job_listings li.job_listing:not(:has(.job-card-modern)),
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .job-card:hover {

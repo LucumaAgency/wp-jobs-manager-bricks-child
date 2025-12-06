@@ -59,6 +59,81 @@ function inspjob_bricks_job_manager_assets() {
 add_theme_support('job-manager-templates');
 
 /**
+ * TRADUCCIONES DEL FORMULARIO DE APLICACIÓN
+ * ==========================================
+ */
+add_filter('gettext', 'inspjob_translate_application_form', 10, 3);
+add_filter('ngettext', 'inspjob_translate_application_form', 10, 3);
+function inspjob_translate_application_form($translated, $text, $domain) {
+    // Solo traducir textos de WP Job Manager
+    if (strpos($domain, 'job') === false && $domain !== 'default') {
+        return $translated;
+    }
+
+    $translations = array(
+        // Formulario de aplicación
+        'Apply for job' => 'Aplicar al empleo',
+        'Apply Now' => 'Aplicar ahora',
+        'Apply' => 'Aplicar',
+        'Application' => 'Aplicación',
+        'Your name' => 'Tu nombre',
+        'Full name' => 'Nombre completo',
+        'Name' => 'Nombre',
+        'Your email' => 'Tu correo electrónico',
+        'Email address' => 'Correo electrónico',
+        'Email' => 'Correo',
+        'Message' => 'Mensaje',
+        'Your message' => 'Tu mensaje',
+        'Cover letter' => 'Carta de presentación',
+        'Application message' => 'Mensaje de aplicación',
+        'Submit' => 'Enviar',
+        'Send application' => 'Enviar aplicación',
+        'Send Application' => 'Enviar Aplicación',
+        'Submit Application' => 'Enviar Aplicación',
+        'Application sent' => 'Aplicación enviada',
+        'Application submitted successfully.' => 'Aplicación enviada correctamente.',
+        'Thank you for your application' => 'Gracias por tu aplicación',
+        'Resume' => 'Currículum',
+        'Upload Resume' => 'Subir Currículum',
+        'Upload CV' => 'Subir CV',
+        'Attach Resume' => 'Adjuntar Currículum',
+        'Online resume' => 'Currículum en línea',
+        'Website/URL' => 'Sitio web/URL',
+        'Website' => 'Sitio web',
+        'Phone' => 'Teléfono',
+        'Phone number' => 'Número de teléfono',
+        'Required' => 'Requerido',
+        'optional' => 'opcional',
+        'Optional' => 'Opcional',
+
+        // Botones y acciones
+        'Apply with Resume' => 'Aplicar con Currículum',
+        'Apply with LinkedIn' => 'Aplicar con LinkedIn',
+        'Apply with Indeed' => 'Aplicar con Indeed',
+
+        // Mensajes de error/éxito
+        'Please enter your name' => 'Por favor ingresa tu nombre',
+        'Please enter your email address' => 'Por favor ingresa tu correo electrónico',
+        'Please enter a valid email address' => 'Por favor ingresa un correo electrónico válido',
+        'Please enter your message' => 'Por favor ingresa tu mensaje',
+        'There was an error sending your application' => 'Hubo un error al enviar tu aplicación',
+
+        // Labels adicionales
+        'Candidate name' => 'Nombre del candidato',
+        'Candidate email' => 'Correo del candidato',
+        'Application email' => 'Correo de aplicación',
+        'How to apply' => 'Cómo aplicar',
+        'To apply for this job' => 'Para aplicar a este empleo',
+    );
+
+    if (isset($translations[$text])) {
+        return $translations[$text];
+    }
+
+    return $translated;
+}
+
+/**
  * CAMPOS PERSONALIZADOS
  * ======================
  */

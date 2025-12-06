@@ -67,11 +67,11 @@ function inspjob_custom_job_fields($fields) {
 
     // Campo Salario Mínimo
     $fields['job']['job_salary_min'] = array(
-        'label'       => 'Salario Mínimo (€)',
+        'label'       => 'Salario Mínimo (S/)',
         'type'        => 'text',
         'required'    => false,
         'placeholder' => 'ej. 30000',
-        'description' => 'Salario mínimo anual en euros (solo números)',
+        'description' => 'Salario mínimo anual en soles (solo números)',
         'priority'    => 7,
         'attributes'  => array(
             'pattern' => '[0-9]*',
@@ -81,11 +81,11 @@ function inspjob_custom_job_fields($fields) {
 
     // Campo Salario Máximo
     $fields['job']['job_salary_max'] = array(
-        'label'       => 'Salario Máximo (€)',
+        'label'       => 'Salario Máximo (S/)',
         'type'        => 'text',
         'required'    => false,
         'placeholder' => 'ej. 50000',
-        'description' => 'Salario máximo anual en euros (solo números)',
+        'description' => 'Salario máximo anual en soles (solo números)',
         'priority'    => 8,
         'attributes'  => array(
             'pattern' => '[0-9]*',
@@ -152,18 +152,18 @@ add_filter('job_manager_job_listing_data_fields', 'inspjob_admin_fields');
 function inspjob_admin_fields($fields) {
 
     $fields['_job_salary_min'] = array(
-        'label'       => __('Salario Mínimo (€)', 'inspjob'),
+        'label'       => __('Salario Mínimo (S/)', 'inspjob'),
         'type'        => 'text',
         'placeholder' => __('ej. 30000', 'inspjob'),
-        'description' => __('Salario mínimo anual en euros', 'inspjob'),
+        'description' => __('Salario mínimo anual en soles', 'inspjob'),
         'priority'    => 3.5
     );
 
     $fields['_job_salary_max'] = array(
-        'label'       => __('Salario Máximo (€)', 'inspjob'),
+        'label'       => __('Salario Máximo (S/)', 'inspjob'),
         'type'        => 'text',
         'placeholder' => __('ej. 50000', 'inspjob'),
-        'description' => __('Salario máximo anual en euros', 'inspjob'),
+        'description' => __('Salario máximo anual en soles', 'inspjob'),
         'priority'    => 3.6
     );
 
@@ -226,11 +226,11 @@ function inspjob_display_custom_fields() {
     if ($salary_min || $salary_max) {
         $salary_display = '';
         if ($salary_min && $salary_max) {
-            $salary_display = '€' . number_format($salary_min, 0, ',', '.') . ' - €' . number_format($salary_max, 0, ',', '.');
+            $salary_display = 'S/ ' . number_format($salary_min, 0, ',', '.') . ' - S/ ' . number_format($salary_max, 0, ',', '.');
         } elseif ($salary_min) {
-            $salary_display = 'Desde €' . number_format($salary_min, 0, ',', '.');
+            $salary_display = 'Desde S/ ' . number_format($salary_min, 0, ',', '.');
         } elseif ($salary_max) {
-            $salary_display = 'Hasta €' . number_format($salary_max, 0, ',', '.');
+            $salary_display = 'Hasta S/ ' . number_format($salary_max, 0, ',', '.');
         }
         echo '<li class="job-salary"><strong>Salario:</strong> ' . esc_html($salary_display) . '</li>';
     }

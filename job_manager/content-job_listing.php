@@ -22,11 +22,11 @@ $urgency = get_post_meta($post->ID, '_job_urgency', true);
 $salary_display = '';
 if ($salary_min || $salary_max) {
     if ($salary_min && $salary_max) {
-        $salary_display = '€' . number_format($salary_min, 0, ',', '.') . ' - €' . number_format($salary_max, 0, ',', '.');
+        $salary_display = 'S/ ' . number_format($salary_min, 0, ',', '.') . ' - S/ ' . number_format($salary_max, 0, ',', '.');
     } elseif ($salary_min) {
-        $salary_display = 'Desde €' . number_format($salary_min, 0, ',', '.');
+        $salary_display = 'Desde S/ ' . number_format($salary_min, 0, ',', '.');
     } elseif ($salary_max) {
-        $salary_display = 'Hasta €' . number_format($salary_max, 0, ',', '.');
+        $salary_display = 'Hasta S/ ' . number_format($salary_max, 0, ',', '.');
     }
 }
 

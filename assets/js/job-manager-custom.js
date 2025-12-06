@@ -11,12 +11,12 @@ jQuery(document).ready(function($) {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
-    // Añadir símbolo de euro a los campos de salario
+    // Añadir símbolo de sol a los campos de salario
     $('input[name="job_salary_min"]').wrap('<div class="salary-input-wrapper"></div>');
-    $('input[name="job_salary_min"]').before('<span class="currency-symbol">€</span>');
+    $('input[name="job_salary_min"]').before('<span class="currency-symbol">S/</span>');
 
     $('input[name="job_salary_max"]').wrap('<div class="salary-input-wrapper"></div>');
-    $('input[name="job_salary_max"]').before('<span class="currency-symbol">€</span>');
+    $('input[name="job_salary_max"]').before('<span class="currency-symbol">S/</span>');
 
     // AJAX para guardar trabajos
     $('.btn-save-job').on('click', function(e) {
@@ -73,11 +73,11 @@ jQuery(document).ready(function($) {
             var preview = '';
 
             if (min && max) {
-                preview = '€' + parseInt(min).toLocaleString('es-ES') + ' - €' + parseInt(max).toLocaleString('es-ES');
+                preview = 'S/ ' + parseInt(min).toLocaleString('es-PE') + ' - S/ ' + parseInt(max).toLocaleString('es-PE');
             } else if (min) {
-                preview = 'Desde €' + parseInt(min).toLocaleString('es-ES');
+                preview = 'Desde S/ ' + parseInt(min).toLocaleString('es-PE');
             } else if (max) {
-                preview = 'Hasta €' + parseInt(max).toLocaleString('es-ES');
+                preview = 'Hasta S/ ' + parseInt(max).toLocaleString('es-PE');
             }
 
             if (preview) {

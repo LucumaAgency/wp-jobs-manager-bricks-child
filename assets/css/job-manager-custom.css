@@ -2446,6 +2446,18 @@ ul.job_listings {
     border-top: none !important;
 }
 
+/* Background blanco en hover/focus de links en job listings */
+.rp4wp-related-job_listing>ul li.job_listing a:focus,
+.rp4wp-related-job_listing>ul li.job_listing a:hover,
+.rp4wp-related-job_listing>ul li.no_job_listings_found a:focus,
+.rp4wp-related-job_listing>ul li.no_job_listings_found a:hover,
+ul.job_listings li.job_listing a:focus,
+ul.job_listings li.job_listing a:hover,
+ul.job_listings li.no_job_listings_found a:focus,
+ul.job_listings li.no_job_listings_found a:hover {
+    background-color: white;
+}
+
 /* Apply section - Botón de aplicar */
 .apply-section {
     margin-top: 1.5rem;

@@ -134,6 +134,142 @@ function inspjob_translate_application_form($translated, $text, $domain) {
 }
 
 /**
+ * PÁGINA DE LOGIN PERSONALIZADA
+ * ==============================
+ */
+
+// Shortcode para formulario de login
+add_shortcode('inspjob_login_form', 'inspjob_login_form_shortcode');
+function inspjob_login_form_shortcode($atts) {
+    // Si ya está logueado, mostrar mensaje
+    if (is_user_logged_in()) {
+        $current_user = wp_get_current_user();
+        $redirect_url = isset($_GET['redirect_to']) ? esc_url($_GET['redirect_to']) : home_url();
+
+        return '<div class="inspjob-login-logged-in">
+            <p>Hola, <strong>' . esc_html($current_user->display_name) . '</strong>. Ya has iniciado sesión.</p>
+            <p><a href="' . esc_url($redirect_url) . '" class="btn-primary">Continuar</a></p>
+        </div>';
+    }
+
+    $atts = shortcode_atts(array(
+        'redirect' => '',
+    ), $atts);
+
+    // Obtener URL de redirección
+    $redirect_to = !empty($atts['redirect']) ? $atts['redirect'] : '';
+    if (empty($redirect_to) && isset($_GET['redirect_to'])) {
+        $redirect_to = esc_url($_GET['redirect_to']);
+    }
+    if (empty($redirect_to)) {
+        $redirect_to = home_url();
+    }
+
+    // Mensajes de error
+    $error_message = '';
+    if (isset($_GET['login']) && $_GET['login'] === 'failed') {
+        $error_message = '<div class="inspjob-login-error">Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.</div>';
+    }
+    if (isset($_GET['logged_out']) && $_GET['logged_out'] === 'true') {
+        $error_message = '<div class="inspjob-login-success">Has cerrado sesión correctamente.</div>';
+    }
+
+    // Formulario de login
+    $form = '<div class="inspjob-login-form-wrapper">
+        ' . $error_message . '
+        <form name="loginform" id="inspjob-loginform" action="' . esc_url(site_url('wp-login.php', 'login_post')) . '" method="post" class="inspjob-login-form">
+            <div class="form-field">
+                <label for="user_login">Correo electrónico o usuario</label>
+                <input type="text" name="log" id="user_login" class="input" required />
+            </div>
+            <div class="form-field">
+                <label for="user_pass">Contraseña</label>
+                <input type="password" name="pwd" id="user_pass" class="input" required />
+            </div>
+            <div class="form-field form-field-remember">
+                <label>
+                    <input name="rememberme" type="checkbox" id="rememberme" value="forever" /> Recordarme
+                </label>
+            </div>
+            <div class="form-field form-field-submit">
+                <input type="submit" name="wp-submit" id="wp-submit" class="btn-primary" value="Iniciar Sesión" />
+                <input type="hidden" name="redirect_to" value="' . esc_attr($redirect_to) . '" />
+            </div>
+        </form>
+        <div class="inspjob-login-links">
+            <a href="' . esc_url(wp_lostpassword_url($redirect_to)) . '">¿Olvidaste tu contraseña?</a>
+            ' . (get_option('users_can_register') ? '<a href="' . esc_url(wp_registration_url()) . '">Crear una cuenta</a>' : '') . '
+        </div>
+    </div>';
+
+    return $form;
+}
+
+// Redirigir wp-login.php a página personalizada (solo para usuarios no admin)
+add_action('login_init', 'inspjob_redirect_login_page');
+function inspjob_redirect_login_page() {
+    // URL de la página de login personalizada
+    $custom_login_page = home_url('/iniciar-sesion/');
+
+    // Obtener la acción actual
+    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
+
+    // No redirigir para estas acciones
+    $allowed_actions = array('logout', 'lostpassword', 'rp', 'resetpass', 'postpass', 'confirm_admin_email');
+
+    if (in_array($action, $allowed_actions)) {
+        return;
+    }
+
+    // No redirigir si es POST (envío de formulario)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        return;
+    }
+
+    // No redirigir si ya está en la página de login personalizada
+    if (strpos($_SERVER['REQUEST_URI'], 'iniciar-sesion') !== false) {
+        return;
+    }
+
+    // Construir URL de redirección
+    $redirect_to = isset($_GET['redirect_to']) ? $_GET['redirect_to'] : '';
+    $login_url = $custom_login_page;
+
+    if (!empty($redirect_to)) {
+        $login_url = add_query_arg('redirect_to', urlencode($redirect_to), $login_url);
+    }
+
+    wp_redirect($login_url);
+    exit;
+}
+
+// Redirigir errores de login a página personalizada
+add_action('wp_login_failed', 'inspjob_login_failed');
+function inspjob_login_failed() {
+    $custom_login_page = home_url('/iniciar-sesion/');
+
+    $redirect_to = isset($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : '';
+    $login_url = add_query_arg('login', 'failed', $custom_login_page);
+
+    if (!empty($redirect_to)) {
+        $login_url = add_query_arg('redirect_to', urlencode($redirect_to), $login_url);
+    }
+
+    wp_redirect($login_url);
+    exit;
+}
+
+// Redirigir después de logout a página personalizada
+add_action('wp_logout', 'inspjob_logout_redirect');
+function inspjob_logout_redirect() {
+    $custom_login_page = home_url('/iniciar-sesion/');
+    $login_url = add_query_arg('logged_out', 'true', $custom_login_page);
+
+    wp_redirect($login_url);
+    exit;
+}
+
+/**
  * CAMPOS PERSONALIZADOS
  * ======================
  */

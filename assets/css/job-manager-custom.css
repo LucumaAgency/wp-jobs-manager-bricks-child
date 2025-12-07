@@ -1729,6 +1729,152 @@ nav.job-manager-pagination {
 }
 
 /* ====================================
+   FORMULARIO DE LOGIN PERSONALIZADO
+   ==================================== */
+
+.inspjob-login-form-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(22, 79, 201, 0.1);
+}
+
+.inspjob-login-form .form-field {
+    margin-bottom: 1.5rem;
+}
+
+.inspjob-login-form .form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+    font-family: var(--font-primary);
+}
+
+.inspjob-login-form .form-field input[type="text"],
+.inspjob-login-form .form-field input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    transition: var(--transition);
+    box-sizing: border-box;
+}
+
+.inspjob-login-form .form-field input[type="text"]:focus,
+.inspjob-login-form .form-field input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(22, 79, 201, 0.1);
+}
+
+.inspjob-login-form .form-field-remember {
+    display: flex;
+    align-items: center;
+}
+
+.inspjob-login-form .form-field-remember label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.inspjob-login-form .form-field-remember input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.inspjob-login-form .btn-primary,
+.inspjob-login-form input[type="submit"] {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.inspjob-login-form .btn-primary:hover,
+.inspjob-login-form input[type="submit"]:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.inspjob-login-links {
+    margin-top: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.inspjob-login-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+}
+
+.inspjob-login-links a:hover {
+    text-decoration: underline;
+}
+
+.inspjob-login-error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-primary);
+    text-align: center;
+}
+
+.inspjob-login-success {
+    background: #f0fdf4;
+    color: #16a34a;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-primary);
+    text-align: center;
+}
+
+.inspjob-login-logged-in {
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--font-primary);
+}
+
+.inspjob-login-logged-in .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.inspjob-login-logged-in .btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* ====================================
    INTEGRACIÓN CON BRICKS
    ==================================== */
 

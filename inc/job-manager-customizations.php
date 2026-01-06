@@ -345,6 +345,22 @@ function inspjob_custom_job_fields($fields) {
         'priority'    => 12
     );
 
+    // Campo Cantidad de Empleados/Vacantes
+    $fields['job']['job_vacancies'] = array(
+        'label'       => 'Cantidad de Vacantes',
+        'type'        => 'select',
+        'required'    => false,
+        'options'     => array(
+            ''      => 'Seleccionar...',
+            '1'     => '1 vacante',
+            '2-5'   => '2 - 5 vacantes',
+            '6-10'  => '6 - 10 vacantes',
+            '11-20' => '11 - 20 vacantes',
+            '20+'   => 'Más de 20 vacantes'
+        ),
+        'priority'    => 13
+    );
+
     return $fields;
 }
 
@@ -392,6 +408,20 @@ function inspjob_admin_fields($fields) {
         'priority'    => 4.1
     );
 
+    $fields['_job_vacancies'] = array(
+        'label'       => __('Cantidad de Vacantes', 'inspjob'),
+        'type'        => 'select',
+        'options'     => array(
+            ''      => __('Seleccionar...', 'inspjob'),
+            '1'     => __('1 vacante', 'inspjob'),
+            '2-5'   => __('2 - 5 vacantes', 'inspjob'),
+            '6-10'  => __('6 - 10 vacantes', 'inspjob'),
+            '11-20' => __('11 - 20 vacantes', 'inspjob'),
+            '20+'   => __('Más de 20 vacantes', 'inspjob')
+        ),
+        'priority'    => 4.2
+    );
+
     return $fields;
 }
 
@@ -421,6 +451,10 @@ function inspjob_save_custom_fields($job_id, $values) {
 
     if (isset($values['job']['job_urgency'])) {
         update_post_meta($job_id, '_job_urgency', $values['job']['job_urgency'] ? '1' : '0');
+    }
+
+    if (isset($values['job']['job_vacancies'])) {
+        update_post_meta($job_id, '_job_vacancies', sanitize_text_field($values['job']['job_vacancies']));
     }
 }
 
@@ -968,6 +1002,15 @@ function inspjob_cards_shortcode($atts) {
         );
     }
 
+    // Filtro de vacantes
+    if (!empty($_GET['filter_vacancies'])) {
+        $meta_query[] = array(
+            'key'     => '_job_vacancies',
+            'value'   => sanitize_text_field($_GET['filter_vacancies']),
+            'compare' => '='
+        );
+    }
+
     if (!empty($meta_query)) {
         $query_args['meta_query'] = $meta_query;
     }
@@ -1096,19 +1139,19 @@ function inspjob_cards_shortcode($atts) {
 
 /**
  * SHORTCODE: [inspjob_filters]
- * Filtros de fecha de publicación
+ * Filtros secundarios: Cantidad de vacantes y Fecha de publicación
  * Para usar debajo del formulario de búsqueda
  */
 add_shortcode('inspjob_filters', 'inspjob_filters_shortcode');
 function inspjob_filters_shortcode($atts) {
     $atts = shortcode_atts(array(
+        'show_vacancies' => 'yes',
         'show_date' => 'yes',
-        'show_remote' => 'yes',
     ), $atts);
 
     // Valores actuales de los filtros
+    $current_vacancies = isset($_GET['filter_vacancies']) ? sanitize_text_field($_GET['filter_vacancies']) : '';
     $current_date = isset($_GET['filter_date']) ? sanitize_text_field($_GET['filter_date']) : '';
-    $current_remote = isset($_GET['filter_remote']) ? sanitize_text_field($_GET['filter_remote']) : '';
 
     ob_start();
     ?>
@@ -1129,8 +1172,52 @@ function inspjob_filters_shortcode($atts) {
                     <input type="hidden" name="filter_job_type[]" value="<?php echo esc_attr($type); ?>">
                 <?php endforeach; ?>
             <?php endif; ?>
+            <?php if (isset($_GET['filter_remote'])) : ?>
+                <input type="hidden" name="filter_remote" value="<?php echo esc_attr($_GET['filter_remote']); ?>">
+            <?php endif; ?>
 
             <div class="inspjob-filters-container">
+                <?php if ($atts['show_vacancies'] === 'yes') : ?>
+                <!-- Filtro de Cantidad de Vacantes -->
+                <div class="inspjob-filter-group">
+                    <label class="inspjob-filter-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Cantidad de Vacantes
+                    </label>
+                    <div class="inspjob-filter-options inspjob-vacancies-options">
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="" <?php checked($current_vacancies, ''); ?>>
+                            <span>Todas</span>
+                        </label>
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '1' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="1" <?php checked($current_vacancies, '1'); ?>>
+                            <span>1 vacante</span>
+                        </label>
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '2-5' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="2-5" <?php checked($current_vacancies, '2-5'); ?>>
+                            <span>2 - 5</span>
+                        </label>
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '6-10' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="6-10" <?php checked($current_vacancies, '6-10'); ?>>
+                            <span>6 - 10</span>
+                        </label>
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '11-20' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="11-20" <?php checked($current_vacancies, '11-20'); ?>>
+                            <span>11 - 20</span>
+                        </label>
+                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '20+' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_vacancies" value="20+" <?php checked($current_vacancies, '20+'); ?>>
+                            <span>+20</span>
+                        </label>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <?php if ($atts['show_date'] === 'yes') : ?>
                 <!-- Filtro de Fecha de Publicación -->
                 <div class="inspjob-filter-group">
@@ -1141,7 +1228,7 @@ function inspjob_filters_shortcode($atts) {
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        Fecha de Publicación
+                        Tiempo de Publicación
                     </label>
                     <div class="inspjob-filter-options inspjob-date-options">
                         <label class="inspjob-filter-chip <?php echo $current_date === '' ? 'active' : ''; ?>">
@@ -1172,20 +1259,6 @@ function inspjob_filters_shortcode($atts) {
                 </div>
                 <?php endif; ?>
 
-                <?php if ($atts['show_remote'] === 'yes') : ?>
-                <!-- Filtro Trabajo Remoto -->
-                <div class="inspjob-filter-group inspjob-filter-remote-standalone">
-                    <label class="inspjob-filter-chip inspjob-chip-toggle <?php echo $current_remote === '1' ? 'active' : ''; ?>">
-                        <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                        <span>Solo Trabajo Remoto</span>
-                    </label>
-                </div>
-                <?php endif; ?>
-
                 <!-- Botones de acción -->
                 <div class="inspjob-filter-actions">
                     <button type="submit" class="inspjob-filter-btn inspjob-filter-apply">
@@ -1207,6 +1280,25 @@ function inspjob_filters_shortcode($atts) {
     </div>
     <?php
     return ob_get_clean();
+}
+
+// Filtrar trabajos por cantidad de vacantes
+add_filter('job_manager_get_listings', 'inspjob_filter_by_vacancies', 10, 2);
+function inspjob_filter_by_vacancies($query_args, $args) {
+    if (!empty($_GET['filter_vacancies'])) {
+        $vacancies = sanitize_text_field($_GET['filter_vacancies']);
+
+        if (!isset($query_args['meta_query'])) {
+            $query_args['meta_query'] = array();
+        }
+
+        $query_args['meta_query'][] = array(
+            'key'     => '_job_vacancies',
+            'value'   => $vacancies,
+            'compare' => '='
+        );
+    }
+    return $query_args;
 }
 
 // Filtrar trabajos por fecha de publicación

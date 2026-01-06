@@ -2639,3 +2639,198 @@ ul.job_listings li.no_job_listings_found a:hover {
     color: #6b7280;
     font-size: 0.9rem;
 }
+
+/* ====================================
+   FILTROS PERSONALIZADOS - SALARIO Y TIPO
+   Shortcode: [inspjob_filters]
+   ==================================== */
+
+.inspjob-filters-wrapper {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.08);
+    border: 1px solid #e5e7eb;
+    font-family: var(--font-primary);
+}
+
+.inspjob-filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Grupos de filtros */
+.inspjob-filter-group {
+    flex: 1;
+    min-width: 280px;
+}
+
+.inspjob-filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-primary);
+}
+
+.inspjob-filter-label svg {
+    color: #164FC9;
+}
+
+/* Opciones de filtros */
+.inspjob-filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Chips de filtro */
+.inspjob-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inspjob-filter-chip input[type="radio"],
+.inspjob-filter-chip input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.inspjob-filter-chip span {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #f3f4f6;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4b5563;
+    transition: all 0.2s ease;
+    font-family: var(--font-primary);
+}
+
+.inspjob-filter-chip:hover span {
+    background: #EBF0FC;
+    border-color: #164FC9;
+    color: #164FC9;
+}
+
+.inspjob-filter-chip.active span,
+.inspjob-filter-chip input:checked + span {
+    background: #164FC9;
+    border-color: #164FC9;
+    color: white;
+}
+
+/* Botones de acción */
+.inspjob-filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-left: auto;
+    padding-top: 1.5rem;
+}
+
+.inspjob-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-family: var(--font-primary);
+    border: none;
+}
+
+.inspjob-filter-apply {
+    background: #164FC9;
+    color: white;
+}
+
+.inspjob-filter-apply:hover {
+    background: #0F3A96;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 79, 201, 0.3);
+}
+
+.inspjob-filter-clear {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+}
+
+.inspjob-filter-clear:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .inspjob-filters-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .inspjob-filter-group {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .inspjob-filter-actions {
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        padding-top: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .inspjob-filters-wrapper {
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+    }
+
+    .inspjob-filter-options {
+        gap: 0.4rem;
+    }
+
+    .inspjob-filter-chip span {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .inspjob-filter-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .inspjob-filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animación de selección */
+@keyframes chipSelect {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.inspjob-filter-chip input:checked + span {
+    animation: chipSelect 0.2s ease;
+}

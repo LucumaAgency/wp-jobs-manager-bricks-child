@@ -103,8 +103,96 @@ jQuery(document).ready(function($) {
         // Esta función es para futuras personalizaciones
     });
 
+    // ============================================
+    // FILTROS PERSONALIZADOS [inspjob_filters]
+    // ============================================
+    initInspjobFilters();
 
 });
+
+/**
+ * Inicializar filtros personalizados de salario y tipo de trabajo
+ */
+function initInspjobFilters() {
+    var $ = jQuery;
+    var $filtersWrapper = $('.inspjob-filters-wrapper');
+
+    if (!$filtersWrapper.length) {
+        return;
+    }
+
+    // Actualizar clase active en chips cuando se selecciona
+    $filtersWrapper.on('change', '.inspjob-filter-chip input', function() {
+        var $chip = jQuery(this).closest('.inspjob-filter-chip');
+        var $group = $chip.closest('.inspjob-filter-options');
+        var isRadio = jQuery(this).attr('type') === 'radio';
+
+        if (isRadio) {
+            // Para radios, quitar active de todos y agregar al seleccionado
+            $group.find('.inspjob-filter-chip').removeClass('active');
+            $chip.addClass('active');
+        } else {
+            // Para checkboxes, toggle la clase active
+            $chip.toggleClass('active', jQuery(this).is(':checked'));
+        }
+
+        // Actualizar contador
+        updateFilterCount();
+    });
+
+    // Efecto de click en chips
+    $filtersWrapper.on('click', '.inspjob-filter-chip', function() {
+        var $span = jQuery(this).find('span');
+        $span.css('transform', 'scale(0.95)');
+        setTimeout(function() {
+            $span.css('transform', 'scale(1)');
+        }, 100);
+    });
+
+    // Inicializar contador
+    updateFilterCount();
+}
+
+/**
+ * Actualizar contador de filtros activos
+ */
+function updateFilterCount() {
+    var $ = jQuery;
+    var $wrapper = $('.inspjob-filters-wrapper');
+
+    if (!$wrapper.length) {
+        return;
+    }
+
+    var count = 0;
+
+    // Contar radios seleccionados (excepto "Todos")
+    $wrapper.find('input[type="radio"]:checked').each(function() {
+        if ($(this).val() !== '') {
+            count++;
+        }
+    });
+
+    // Contar checkboxes seleccionados
+    count += $wrapper.find('input[type="checkbox"]:checked').length;
+
+    // Actualizar texto del botón si hay filtros activos
+    var $applyBtn = $wrapper.find('.inspjob-filter-apply');
+    if (count > 0) {
+        $applyBtn.html(
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+            '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>' +
+            '</svg> Aplicar (' + count + ')'
+        );
+        $wrapper.find('.inspjob-filter-clear').show();
+    } else {
+        $applyBtn.html(
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+            '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>' +
+            '</svg> Aplicar Filtros'
+        );
+    }
+}
 
 // CSS para animaciones
 var style = document.createElement('style');

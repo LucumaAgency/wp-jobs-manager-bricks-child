@@ -589,7 +589,7 @@ function inspjob_featured_shortcode($atts) {
     return ob_get_clean();
 }
 
-// Shortcode para búsqueda rápida
+// Shortcode para búsqueda rápida (legacy)
 add_shortcode('inspjob_search', 'inspjob_search_shortcode');
 function inspjob_search_shortcode() {
     ob_start();
@@ -609,6 +609,469 @@ function inspjob_search_shortcode() {
             </button>
         </div>
     </form>
+    <?php
+    return ob_get_clean();
+}
+
+/**
+ * SHORTCODE: [inspjob_form]
+ * Formulario de búsqueda completo con filtros integrados
+ *
+ * Parámetros:
+ * - show_keywords: yes/no (default: yes)
+ * - show_location: yes/no (default: yes)
+ * - show_categories: yes/no (default: no)
+ * - show_salary: yes/no (default: yes)
+ * - show_job_type: yes/no (default: yes)
+ * - show_remote: yes/no (default: yes)
+ * - layout: horizontal/vertical (default: horizontal)
+ */
+add_shortcode('inspjob_form', 'inspjob_form_shortcode');
+function inspjob_form_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'show_keywords'   => 'yes',
+        'show_location'   => 'yes',
+        'show_categories' => 'no',
+        'show_salary'     => 'yes',
+        'show_job_type'   => 'yes',
+        'show_remote'     => 'yes',
+        'layout'          => 'horizontal',
+    ), $atts);
+
+    // Obtener valores actuales
+    $current_keywords   = isset($_GET['search_keywords']) ? sanitize_text_field($_GET['search_keywords']) : '';
+    $current_location   = isset($_GET['search_location']) ? sanitize_text_field($_GET['search_location']) : '';
+    $current_category   = isset($_GET['search_category']) ? sanitize_text_field($_GET['search_category']) : '';
+    $current_salary     = isset($_GET['filter_salary']) ? sanitize_text_field($_GET['filter_salary']) : '';
+    $current_job_types  = isset($_GET['filter_job_type']) ? array_map('sanitize_text_field', (array)$_GET['filter_job_type']) : array();
+    $current_remote     = isset($_GET['filter_remote']) ? sanitize_text_field($_GET['filter_remote']) : '';
+
+    // Obtener taxonomías
+    $job_types = get_terms(array('taxonomy' => 'job_listing_type', 'hide_empty' => false));
+    $categories = get_terms(array('taxonomy' => 'job_listing_category', 'hide_empty' => false));
+
+    $layout_class = $atts['layout'] === 'vertical' ? 'inspjob-form-vertical' : 'inspjob-form-horizontal';
+
+    ob_start();
+    ?>
+    <div class="inspjob-form-wrapper <?php echo esc_attr($layout_class); ?>">
+        <form class="inspjob-form" method="get" action="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>">
+
+            <!-- Campos principales de búsqueda -->
+            <div class="inspjob-form-main">
+                <?php if ($atts['show_keywords'] === 'yes') : ?>
+                <div class="inspjob-form-field inspjob-field-keywords">
+                    <label for="inspjob-keywords">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Palabras clave
+                    </label>
+                    <input type="text" id="inspjob-keywords" name="search_keywords" value="<?php echo esc_attr($current_keywords); ?>" placeholder="Título, empresa, habilidades...">
+                </div>
+                <?php endif; ?>
+
+                <?php if ($atts['show_location'] === 'yes') : ?>
+                <div class="inspjob-form-field inspjob-field-location">
+                    <label for="inspjob-location">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        Ubicación
+                    </label>
+                    <input type="text" id="inspjob-location" name="search_location" value="<?php echo esc_attr($current_location); ?>" placeholder="Ciudad, distrito...">
+                </div>
+                <?php endif; ?>
+
+                <?php if ($atts['show_categories'] === 'yes' && !empty($categories) && !is_wp_error($categories)) : ?>
+                <div class="inspjob-form-field inspjob-field-category">
+                    <label for="inspjob-category">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Categoría
+                    </label>
+                    <select id="inspjob-category" name="search_category">
+                        <option value="">Todas las categorías</option>
+                        <?php foreach ($categories as $cat) : ?>
+                        <option value="<?php echo esc_attr($cat->slug); ?>" <?php selected($current_category, $cat->slug); ?>><?php echo esc_html($cat->name); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endif; ?>
+
+                <div class="inspjob-form-field inspjob-field-submit">
+                    <button type="submit" class="inspjob-btn-search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros adicionales -->
+            <?php if ($atts['show_salary'] === 'yes' || $atts['show_job_type'] === 'yes' || $atts['show_remote'] === 'yes') : ?>
+            <div class="inspjob-form-filters">
+
+                <?php if ($atts['show_salary'] === 'yes') : ?>
+                <!-- Filtro Salario -->
+                <div class="inspjob-filter-group">
+                    <span class="inspjob-filter-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v12M9 9h6M9 15h6"></path>
+                        </svg>
+                        Salario
+                    </span>
+                    <div class="inspjob-filter-chips">
+                        <label class="inspjob-chip <?php echo $current_salary === '' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="" <?php checked($current_salary, ''); ?>>
+                            <span>Todos</span>
+                        </label>
+                        <label class="inspjob-chip <?php echo $current_salary === '0-2000' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="0-2000" <?php checked($current_salary, '0-2000'); ?>>
+                            <span>Hasta S/2k</span>
+                        </label>
+                        <label class="inspjob-chip <?php echo $current_salary === '2000-4000' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="2000-4000" <?php checked($current_salary, '2000-4000'); ?>>
+                            <span>S/2k - 4k</span>
+                        </label>
+                        <label class="inspjob-chip <?php echo $current_salary === '4000-6000' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="4000-6000" <?php checked($current_salary, '4000-6000'); ?>>
+                            <span>S/4k - 6k</span>
+                        </label>
+                        <label class="inspjob-chip <?php echo $current_salary === '6000-10000' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="6000-10000" <?php checked($current_salary, '6000-10000'); ?>>
+                            <span>S/6k - 10k</span>
+                        </label>
+                        <label class="inspjob-chip <?php echo $current_salary === '10000+' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_salary" value="10000+" <?php checked($current_salary, '10000+'); ?>>
+                            <span>+S/10k</span>
+                        </label>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($atts['show_job_type'] === 'yes' && !empty($job_types) && !is_wp_error($job_types)) : ?>
+                <!-- Filtro Tipo de Trabajo -->
+                <div class="inspjob-filter-group">
+                    <span class="inspjob-filter-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        Tipo
+                    </span>
+                    <div class="inspjob-filter-chips">
+                        <?php foreach ($job_types as $type) : ?>
+                        <label class="inspjob-chip <?php echo in_array($type->slug, $current_job_types) ? 'active' : ''; ?>">
+                            <input type="checkbox" name="filter_job_type[]" value="<?php echo esc_attr($type->slug); ?>" <?php checked(in_array($type->slug, $current_job_types)); ?>>
+                            <span><?php echo esc_html($type->name); ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($atts['show_remote'] === 'yes') : ?>
+                <!-- Filtro Remoto -->
+                <div class="inspjob-filter-group inspjob-filter-remote">
+                    <label class="inspjob-chip inspjob-chip-toggle <?php echo $current_remote === '1' ? 'active' : ''; ?>">
+                        <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>Solo Remoto</span>
+                    </label>
+                </div>
+                <?php endif; ?>
+
+                <!-- Limpiar filtros -->
+                <div class="inspjob-filter-clear-wrap">
+                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Limpiar
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
+
+        </form>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+// Filtrar por trabajo remoto
+add_filter('job_manager_get_listings', 'inspjob_filter_by_remote_checkbox', 10, 2);
+function inspjob_filter_by_remote_checkbox($query_args, $args) {
+    if (!empty($_GET['filter_remote']) && $_GET['filter_remote'] === '1') {
+        if (!isset($query_args['meta_query'])) {
+            $query_args['meta_query'] = array();
+        }
+        $query_args['meta_query'][] = array(
+            'key'     => '_remote_work',
+            'value'   => '1',
+            'compare' => '='
+        );
+    }
+    return $query_args;
+}
+
+// Filtrar por categoría
+add_filter('job_manager_get_listings', 'inspjob_filter_by_category', 10, 2);
+function inspjob_filter_by_category($query_args, $args) {
+    if (!empty($_GET['search_category'])) {
+        if (!isset($query_args['tax_query'])) {
+            $query_args['tax_query'] = array();
+        }
+        $query_args['tax_query'][] = array(
+            'taxonomy' => 'job_listing_category',
+            'field'    => 'slug',
+            'terms'    => sanitize_text_field($_GET['search_category']),
+        );
+    }
+    return $query_args;
+}
+
+/**
+ * SHORTCODE: [inspjob_cards]
+ * Mostrar cards de trabajos con control total
+ *
+ * Parámetros:
+ * - per_page: número de trabajos (default: 12)
+ * - columns: 1-4 columnas (default: 3)
+ * - orderby: date/title/rand (default: date)
+ * - order: ASC/DESC (default: DESC)
+ * - featured: yes/no/only (default: no) - only = solo destacados
+ * - filled: yes/no (default: no) - mostrar trabajos llenos
+ * - categories: slugs separados por coma
+ * - job_types: slugs separados por coma
+ * - show_pagination: yes/no (default: yes)
+ * - show_count: yes/no (default: yes) - mostrar contador
+ */
+add_shortcode('inspjob_cards', 'inspjob_cards_shortcode');
+function inspjob_cards_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'per_page'        => 12,
+        'columns'         => 3,
+        'orderby'         => 'date',
+        'order'           => 'DESC',
+        'featured'        => 'no',
+        'filled'          => 'no',
+        'categories'      => '',
+        'job_types'       => '',
+        'show_pagination' => 'yes',
+        'show_count'      => 'yes',
+    ), $atts);
+
+    // Construir argumentos de query
+    $query_args = array(
+        'post_type'      => 'job_listing',
+        'post_status'    => 'publish',
+        'posts_per_page' => intval($atts['per_page']),
+        'orderby'        => $atts['orderby'],
+        'order'          => $atts['order'],
+        'paged'          => max(1, get_query_var('paged')),
+    );
+
+    // Meta query
+    $meta_query = array();
+
+    // Featured
+    if ($atts['featured'] === 'only') {
+        $meta_query[] = array(
+            'key'   => '_featured',
+            'value' => '1',
+        );
+    } elseif ($atts['featured'] === 'yes') {
+        $query_args['orderby'] = array(
+            'meta_value_num' => 'DESC',
+            $atts['orderby'] => $atts['order'],
+        );
+        $query_args['meta_key'] = '_featured';
+    }
+
+    // Filled positions
+    if ($atts['filled'] === 'no') {
+        $meta_query[] = array(
+            'relation' => 'OR',
+            array(
+                'key'     => '_filled',
+                'value'   => '0',
+            ),
+            array(
+                'key'     => '_filled',
+                'compare' => 'NOT EXISTS',
+            ),
+        );
+    }
+
+    // Aplicar filtros de búsqueda desde URL
+    if (!empty($_GET['search_keywords'])) {
+        $query_args['s'] = sanitize_text_field($_GET['search_keywords']);
+    }
+
+    if (!empty($_GET['search_location'])) {
+        $meta_query[] = array(
+            'key'     => '_job_location',
+            'value'   => sanitize_text_field($_GET['search_location']),
+            'compare' => 'LIKE',
+        );
+    }
+
+    // Filtro de salario
+    if (!empty($_GET['filter_salary'])) {
+        $salary_range = sanitize_text_field($_GET['filter_salary']);
+        $ranges = array(
+            '0-2000'     => array(0, 2000),
+            '2000-4000'  => array(2000, 4000),
+            '4000-6000'  => array(4000, 6000),
+            '6000-10000' => array(6000, 10000),
+            '10000+'     => array(10000, 999999999),
+        );
+        if (isset($ranges[$salary_range])) {
+            $min = $ranges[$salary_range][0];
+            $max = $ranges[$salary_range][1];
+            $meta_query[] = array(
+                'relation' => 'OR',
+                array(
+                    'key'     => '_job_salary_min',
+                    'value'   => array($min, $max),
+                    'type'    => 'NUMERIC',
+                    'compare' => 'BETWEEN'
+                ),
+                array(
+                    'key'     => '_job_salary_max',
+                    'value'   => array($min, $max),
+                    'type'    => 'NUMERIC',
+                    'compare' => 'BETWEEN'
+                )
+            );
+        }
+    }
+
+    // Filtro remoto
+    if (!empty($_GET['filter_remote']) && $_GET['filter_remote'] === '1') {
+        $meta_query[] = array(
+            'key'     => '_remote_work',
+            'value'   => '1',
+            'compare' => '='
+        );
+    }
+
+    if (!empty($meta_query)) {
+        $query_args['meta_query'] = $meta_query;
+    }
+
+    // Tax query
+    $tax_query = array();
+
+    // Categorías del shortcode
+    if (!empty($atts['categories'])) {
+        $tax_query[] = array(
+            'taxonomy' => 'job_listing_category',
+            'field'    => 'slug',
+            'terms'    => array_map('trim', explode(',', $atts['categories'])),
+        );
+    }
+
+    // Categoría desde URL
+    if (!empty($_GET['search_category'])) {
+        $tax_query[] = array(
+            'taxonomy' => 'job_listing_category',
+            'field'    => 'slug',
+            'terms'    => sanitize_text_field($_GET['search_category']),
+        );
+    }
+
+    // Tipos de trabajo del shortcode
+    if (!empty($atts['job_types'])) {
+        $tax_query[] = array(
+            'taxonomy' => 'job_listing_type',
+            'field'    => 'slug',
+            'terms'    => array_map('trim', explode(',', $atts['job_types'])),
+        );
+    }
+
+    // Tipos de trabajo desde URL
+    if (!empty($_GET['filter_job_type']) && is_array($_GET['filter_job_type'])) {
+        $tax_query[] = array(
+            'taxonomy' => 'job_listing_type',
+            'field'    => 'slug',
+            'terms'    => array_map('sanitize_text_field', $_GET['filter_job_type']),
+            'operator' => 'IN'
+        );
+    }
+
+    if (!empty($tax_query)) {
+        $query_args['tax_query'] = $tax_query;
+    }
+
+    $jobs = new WP_Query($query_args);
+
+    ob_start();
+    ?>
+    <div class="inspjob-cards-wrapper">
+
+        <?php if ($atts['show_count'] === 'yes') : ?>
+        <div class="inspjob-cards-header">
+            <p class="inspjob-jobs-count">
+                <?php
+                $total = $jobs->found_posts;
+                echo sprintf(
+                    _n('%s trabajo encontrado', '%s trabajos encontrados', $total, 'inspjob'),
+                    '<strong>' . number_format_i18n($total) . '</strong>'
+                );
+                ?>
+            </p>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($jobs->have_posts()) : ?>
+        <div class="inspjob-cards-grid inspjob-cols-<?php echo intval($atts['columns']); ?>">
+            <?php while ($jobs->have_posts()) : $jobs->the_post(); ?>
+            <div class="inspjob-card-item">
+                <?php get_job_manager_template_part('content', 'job_listing'); ?>
+            </div>
+            <?php endwhile; ?>
+        </div>
+
+        <?php if ($atts['show_pagination'] === 'yes' && $jobs->max_num_pages > 1) : ?>
+        <div class="inspjob-pagination">
+            <?php
+            echo paginate_links(array(
+                'total'     => $jobs->max_num_pages,
+                'current'   => max(1, get_query_var('paged')),
+                'prev_text' => '&laquo; Anterior',
+                'next_text' => 'Siguiente &raquo;',
+            ));
+            ?>
+        </div>
+        <?php endif; ?>
+
+        <?php else : ?>
+        <div class="inspjob-no-jobs">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <h3>No se encontraron trabajos</h3>
+            <p>Intenta ajustar los filtros o busca con otros términos.</p>
+            <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-reset">Ver todos los trabajos</a>
+        </div>
+        <?php endif; ?>
+
+        <?php wp_reset_postdata(); ?>
+    </div>
     <?php
     return ob_get_clean();
 }

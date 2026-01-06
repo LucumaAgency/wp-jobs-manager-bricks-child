@@ -2834,3 +2834,418 @@ ul.job_listings li.no_job_listings_found a:hover {
 .inspjob-filter-chip input:checked + span {
     animation: chipSelect 0.2s ease;
 }
+
+/* ====================================
+   SHORTCODE: [inspjob_form]
+   Formulario de búsqueda completo
+   ==================================== */
+
+.inspjob-form-wrapper {
+    background: linear-gradient(135deg, #164FC9 0%, #0F3A96 100%);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 40px rgba(22, 79, 201, 0.2);
+}
+
+/* Campos principales */
+.inspjob-form-main {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.inspjob-form-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+.inspjob-form-field label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.inspjob-form-field label svg {
+    opacity: 0.8;
+}
+
+.inspjob-form-field input[type="text"],
+.inspjob-form-field select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.inspjob-form-field input[type="text"]:focus,
+.inspjob-form-field select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.inspjob-form-field input::placeholder {
+    color: #9ca3af;
+}
+
+.inspjob-field-submit {
+    flex: 0 0 auto;
+    min-width: auto;
+}
+
+.inspjob-btn-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background: white;
+    color: #164FC9;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inspjob-btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Filtros adicionales */
+.inspjob-form-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.inspjob-form-filters .inspjob-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.inspjob-filter-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.inspjob-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+/* Chips de filtro */
+.inspjob-chip {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.inspjob-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.inspjob-chip span {
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.inspjob-chip:hover span {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.inspjob-chip.active span,
+.inspjob-chip input:checked + span {
+    background: white;
+    color: #164FC9;
+    border-color: white;
+}
+
+/* Chip toggle (remoto) */
+.inspjob-chip-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.inspjob-chip-toggle span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.inspjob-chip-toggle svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Botón limpiar */
+.inspjob-filter-clear-wrap {
+    margin-left: auto;
+}
+
+.inspjob-btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.inspjob-btn-clear:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Layout vertical */
+.inspjob-form-vertical .inspjob-form-main {
+    flex-direction: column;
+}
+
+.inspjob-form-vertical .inspjob-form-field {
+    width: 100%;
+}
+
+.inspjob-form-vertical .inspjob-field-submit {
+    width: 100%;
+}
+
+.inspjob-form-vertical .inspjob-btn-search {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .inspjob-form-wrapper {
+        padding: 1.5rem;
+    }
+
+    .inspjob-form-main {
+        flex-direction: column;
+    }
+
+    .inspjob-form-field {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .inspjob-field-submit {
+        width: 100%;
+    }
+
+    .inspjob-btn-search {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .inspjob-form-filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .inspjob-filter-clear-wrap {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .inspjob-btn-clear {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ====================================
+   SHORTCODE: [inspjob_cards]
+   Grid de cards de trabajos
+   ==================================== */
+
+.inspjob-cards-wrapper {
+    font-family: var(--font-primary);
+}
+
+.inspjob-cards-header {
+    margin-bottom: 1.5rem;
+}
+
+.inspjob-jobs-count {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.inspjob-jobs-count strong {
+    color: #1f2937;
+}
+
+/* Grid de cards */
+.inspjob-cards-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.inspjob-cols-1 { grid-template-columns: 1fr; }
+.inspjob-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.inspjob-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.inspjob-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+.inspjob-card-item {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.inspjob-card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(22, 79, 201, 0.15);
+}
+
+/* Paginación */
+.inspjob-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.inspjob-pagination a,
+.inspjob-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.75rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #4b5563;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.inspjob-pagination a:hover {
+    background: #164FC9;
+    border-color: #164FC9;
+    color: white;
+}
+
+.inspjob-pagination .current,
+.inspjob-pagination span.current {
+    background: #164FC9;
+    border-color: #164FC9;
+    color: white;
+}
+
+.inspjob-pagination .dots {
+    background: transparent;
+    border: none;
+}
+
+/* Estado sin resultados */
+.inspjob-no-jobs {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(22, 79, 201, 0.08);
+}
+
+.inspjob-no-jobs svg {
+    margin-bottom: 1.5rem;
+}
+
+.inspjob-no-jobs h3 {
+    color: #1f2937;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.inspjob-no-jobs p {
+    color: #6b7280;
+    margin: 0 0 1.5rem 0;
+}
+
+.inspjob-btn-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #164FC9;
+    color: white;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.inspjob-btn-reset:hover {
+    background: #0F3A96;
+    transform: translateY(-2px);
+}
+
+/* Responsive para cards grid */
+@media (max-width: 1024px) {
+    .inspjob-cols-4 { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .inspjob-cols-3,
+    .inspjob-cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .inspjob-cols-2,
+    .inspjob-cols-3,
+    .inspjob-cols-4 { grid-template-columns: 1fr; }
+}

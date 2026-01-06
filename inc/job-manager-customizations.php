@@ -751,89 +751,81 @@ function inspjob_form_shortcode($atts) {
             <?php if ($atts['show_salary'] === 'yes' || $atts['show_job_type'] === 'yes' || $atts['show_remote'] === 'yes') : ?>
             <div class="inspjob-form-filters">
 
-                <?php if ($atts['show_salary'] === 'yes') : ?>
-                <!-- Filtro Salario -->
-                <div class="inspjob-filter-group">
-                    <span class="inspjob-filter-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v12M9 9h6M9 15h6"></path>
-                        </svg>
-                        Salario
-                    </span>
-                    <div class="inspjob-filter-chips">
-                        <label class="inspjob-chip <?php echo $current_salary === '' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="" <?php checked($current_salary, ''); ?>>
-                            <span>Todos</span>
-                        </label>
-                        <label class="inspjob-chip <?php echo $current_salary === '0-2000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="0-2000" <?php checked($current_salary, '0-2000'); ?>>
-                            <span>Hasta S/2k</span>
-                        </label>
-                        <label class="inspjob-chip <?php echo $current_salary === '2000-4000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="2000-4000" <?php checked($current_salary, '2000-4000'); ?>>
-                            <span>S/2k - 4k</span>
-                        </label>
-                        <label class="inspjob-chip <?php echo $current_salary === '4000-6000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="4000-6000" <?php checked($current_salary, '4000-6000'); ?>>
-                            <span>S/4k - 6k</span>
-                        </label>
-                        <label class="inspjob-chip <?php echo $current_salary === '6000-10000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="6000-10000" <?php checked($current_salary, '6000-10000'); ?>>
-                            <span>S/6k - 10k</span>
-                        </label>
-                        <label class="inspjob-chip <?php echo $current_salary === '10000+' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="10000+" <?php checked($current_salary, '10000+'); ?>>
-                            <span>+S/10k</span>
+                <div class="inspjob-filters-row">
+                    <?php if ($atts['show_salary'] === 'yes') : ?>
+                    <!-- Filtro Salario -->
+                    <div class="inspjob-filter-group inspjob-filter-salary">
+                        <span class="inspjob-filter-title">Salario</span>
+                        <div class="inspjob-filter-chips">
+                            <label class="inspjob-chip <?php echo $current_salary === '' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="" <?php checked($current_salary, ''); ?>>
+                                <span>Todos</span>
+                            </label>
+                            <label class="inspjob-chip <?php echo $current_salary === '0-2000' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="0-2000" <?php checked($current_salary, '0-2000'); ?>>
+                                <span>Hasta S/2k</span>
+                            </label>
+                            <label class="inspjob-chip <?php echo $current_salary === '2000-4000' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="2000-4000" <?php checked($current_salary, '2000-4000'); ?>>
+                                <span>S/2k - 4k</span>
+                            </label>
+                            <label class="inspjob-chip <?php echo $current_salary === '4000-6000' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="4000-6000" <?php checked($current_salary, '4000-6000'); ?>>
+                                <span>S/4k - 6k</span>
+                            </label>
+                            <label class="inspjob-chip <?php echo $current_salary === '6000-10000' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="6000-10000" <?php checked($current_salary, '6000-10000'); ?>>
+                                <span>S/6k - 10k</span>
+                            </label>
+                            <label class="inspjob-chip <?php echo $current_salary === '10000+' ? 'active' : ''; ?>">
+                                <input type="radio" name="filter_salary" value="10000+" <?php checked($current_salary, '10000+'); ?>>
+                                <span>+S/10k</span>
+                            </label>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="inspjob-filters-row inspjob-filters-row-type">
+                    <?php if ($atts['show_job_type'] === 'yes' && !empty($job_types) && !is_wp_error($job_types)) : ?>
+                    <!-- Filtro Tipo de Trabajo -->
+                    <div class="inspjob-filter-group inspjob-filter-type">
+                        <span class="inspjob-filter-title">Tipo</span>
+                        <div class="inspjob-filter-chips">
+                            <?php foreach ($job_types as $type) : ?>
+                            <label class="inspjob-chip <?php echo in_array($type->slug, $current_job_types) ? 'active' : ''; ?>">
+                                <input type="checkbox" name="filter_job_type[]" value="<?php echo esc_attr($type->slug); ?>" <?php checked(in_array($type->slug, $current_job_types)); ?>>
+                                <span><?php echo esc_html($type->name); ?></span>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($atts['show_remote'] === 'yes') : ?>
+                    <!-- Filtro Remoto (como botón) -->
+                    <div class="inspjob-filter-group inspjob-filter-remote-btn">
+                        <label class="inspjob-btn-remote <?php echo $current_remote === '1' ? 'active' : ''; ?>">
+                            <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Remoto</span>
                         </label>
                     </div>
-                </div>
-                <?php endif; ?>
+                    <?php endif; ?>
 
-                <?php if ($atts['show_job_type'] === 'yes' && !empty($job_types) && !is_wp_error($job_types)) : ?>
-                <!-- Filtro Tipo de Trabajo -->
-                <div class="inspjob-filter-group">
-                    <span class="inspjob-filter-title">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                        </svg>
-                        Tipo
-                    </span>
-                    <div class="inspjob-filter-chips">
-                        <?php foreach ($job_types as $type) : ?>
-                        <label class="inspjob-chip <?php echo in_array($type->slug, $current_job_types) ? 'active' : ''; ?>">
-                            <input type="checkbox" name="filter_job_type[]" value="<?php echo esc_attr($type->slug); ?>" <?php checked(in_array($type->slug, $current_job_types)); ?>>
-                            <span><?php echo esc_html($type->name); ?></span>
-                        </label>
-                        <?php endforeach; ?>
+                    <!-- Limpiar filtros -->
+                    <div class="inspjob-filter-clear-wrap">
+                        <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Limpiar
+                        </a>
                     </div>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($atts['show_remote'] === 'yes') : ?>
-                <!-- Filtro Remoto -->
-                <div class="inspjob-filter-group inspjob-filter-remote">
-                    <label class="inspjob-chip inspjob-chip-toggle <?php echo $current_remote === '1' ? 'active' : ''; ?>">
-                        <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                        <span>Solo Remoto</span>
-                    </label>
-                </div>
-                <?php endif; ?>
-
-                <!-- Limpiar filtros -->
-                <div class="inspjob-filter-clear-wrap">
-                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                        Limpiar
-                    </a>
                 </div>
             </div>
             <?php endif; ?>

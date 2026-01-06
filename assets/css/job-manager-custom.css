@@ -3093,31 +3093,46 @@ ul.job_listings li.no_job_listings_found a:hover {
 /* Filtros adicionales */
 .inspjob-form-filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.inspjob-form-filters .inspjob-filter-group {
+/* Filas de filtros */
+.inspjob-filters-row {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inspjob-filters-row-type {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1.5rem;
     flex-wrap: wrap;
 }
 
-.inspjob-filter-title {
+.inspjob-form-filters .inspjob-filter-group {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inspjob-filter-type {
+    flex: 1;
+}
+
+.inspjob-filter-title {
+    display: block;
     color: white;
     font-weight: 600;
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    white-space: nowrap;
+    margin-bottom: 0.25rem;
 }
 
 .inspjob-filter-chips {
@@ -3163,27 +3178,53 @@ ul.job_listings li.no_job_listings_found a:hover {
     border-color: white;
 }
 
-/* Chip toggle (remoto) */
-.inspjob-chip-toggle {
+/* Botón Remoto */
+.inspjob-filter-remote-btn {
+    flex: 0 0 auto;
+}
+
+.inspjob-btn-remote {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
-.inspjob-chip-toggle span {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+.inspjob-btn-remote input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
-.inspjob-chip-toggle svg {
-    width: 14px;
-    height: 14px;
+.inspjob-btn-remote:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.inspjob-btn-remote.active,
+.inspjob-btn-remote:has(input:checked) {
+    background: white;
+    border-color: white;
+    color: #164FC9;
+}
+
+.inspjob-btn-remote svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Botón limpiar */
 .inspjob-filter-clear-wrap {
-    margin-left: auto;
+    flex: 0 0 auto;
 }
 
 .inspjob-btn-clear {
@@ -3249,12 +3290,25 @@ ul.job_listings li.no_job_listings_found a:hover {
     }
 
     .inspjob-form-filters {
+        gap: 1rem;
+    }
+
+    .inspjob-filters-row-type {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .inspjob-filter-remote-btn {
+        width: 100%;
+    }
+
+    .inspjob-btn-remote {
+        width: 100%;
+        justify-content: center;
     }
 
     .inspjob-filter-clear-wrap {
-        margin-left: 0;
         width: 100%;
     }
 

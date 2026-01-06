@@ -2835,6 +2835,63 @@ ul.job_listings li.no_job_listings_found a:hover {
     animation: chipSelect 0.2s ease;
 }
 
+/* Filtro remoto standalone en [inspjob_filters] */
+.inspjob-filter-remote-standalone {
+    margin-left: auto;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f3f4f6;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle:hover {
+    background: #EBF0FC;
+    border-color: #164FC9;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle.active,
+.inspjob-filter-remote-standalone .inspjob-chip-toggle input:checked ~ span {
+    background: #164FC9;
+    border-color: #164FC9;
+    color: white;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.inspjob-filter-remote-standalone .inspjob-chip-toggle span {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .inspjob-filter-remote-standalone {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .inspjob-filter-remote-standalone .inspjob-chip-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* ====================================
    SHORTCODE: [inspjob_form]
    Formulario de búsqueda completo

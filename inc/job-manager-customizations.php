@@ -972,6 +972,26 @@ function inspjob_cards_shortcode($atts) {
         $query_args['meta_query'] = $meta_query;
     }
 
+    // Filtro de fecha de publicación
+    if (!empty($_GET['filter_date'])) {
+        $date_filter = sanitize_text_field($_GET['filter_date']);
+        $date_ranges = array(
+            'today'   => 'today',
+            '3days'   => '-3 days',
+            'week'    => '-1 week',
+            '15days'  => '-15 days',
+            'month'   => '-1 month',
+        );
+        if (isset($date_ranges[$date_filter])) {
+            $query_args['date_query'] = array(
+                array(
+                    'after'     => $date_ranges[$date_filter],
+                    'inclusive' => true,
+                ),
+            );
+        }
+    }
+
     // Tax query
     $tax_query = array();
 
@@ -1074,28 +1094,26 @@ function inspjob_cards_shortcode($atts) {
     return ob_get_clean();
 }
 
-// Shortcode para filtros de salario y tipo de trabajo
+/**
+ * SHORTCODE: [inspjob_filters]
+ * Filtros de fecha de publicación
+ * Para usar debajo del formulario de búsqueda
+ */
 add_shortcode('inspjob_filters', 'inspjob_filters_shortcode');
 function inspjob_filters_shortcode($atts) {
     $atts = shortcode_atts(array(
-        'show_salary' => 'yes',
-        'show_job_type' => 'yes',
+        'show_date' => 'yes',
+        'show_remote' => 'yes',
     ), $atts);
 
-    // Obtener tipos de trabajo desde la taxonomía
-    $job_types = get_terms(array(
-        'taxonomy' => 'job_listing_type',
-        'hide_empty' => false,
-    ));
-
     // Valores actuales de los filtros
-    $current_salary = isset($_GET['filter_salary']) ? sanitize_text_field($_GET['filter_salary']) : '';
-    $current_job_types = isset($_GET['filter_job_type']) ? array_map('sanitize_text_field', (array)$_GET['filter_job_type']) : array();
+    $current_date = isset($_GET['filter_date']) ? sanitize_text_field($_GET['filter_date']) : '';
+    $current_remote = isset($_GET['filter_remote']) ? sanitize_text_field($_GET['filter_remote']) : '';
 
     ob_start();
     ?>
     <div class="inspjob-filters-wrapper">
-        <form class="inspjob-filters-form" method="get" action="<?php echo get_permalink(get_option('job_manager_jobs_page_id')); ?>">
+        <form class="inspjob-filters-form" method="get" action="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>">
             <?php // Preservar otros parámetros de búsqueda ?>
             <?php if (isset($_GET['search_keywords'])) : ?>
                 <input type="hidden" name="search_keywords" value="<?php echo esc_attr($_GET['search_keywords']); ?>">
@@ -1103,65 +1121,68 @@ function inspjob_filters_shortcode($atts) {
             <?php if (isset($_GET['search_location'])) : ?>
                 <input type="hidden" name="search_location" value="<?php echo esc_attr($_GET['search_location']); ?>">
             <?php endif; ?>
+            <?php if (isset($_GET['filter_salary'])) : ?>
+                <input type="hidden" name="filter_salary" value="<?php echo esc_attr($_GET['filter_salary']); ?>">
+            <?php endif; ?>
+            <?php if (isset($_GET['filter_job_type']) && is_array($_GET['filter_job_type'])) : ?>
+                <?php foreach ($_GET['filter_job_type'] as $type) : ?>
+                    <input type="hidden" name="filter_job_type[]" value="<?php echo esc_attr($type); ?>">
+                <?php endforeach; ?>
+            <?php endif; ?>
 
             <div class="inspjob-filters-container">
-                <?php if ($atts['show_salary'] === 'yes') : ?>
-                <!-- Filtro de Salario -->
+                <?php if ($atts['show_date'] === 'yes') : ?>
+                <!-- Filtro de Fecha de Publicación -->
                 <div class="inspjob-filter-group">
                     <label class="inspjob-filter-label">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 6v12M9 9h6M9 15h6"></path>
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        Rango Salarial
+                        Fecha de Publicación
                     </label>
-                    <div class="inspjob-filter-options inspjob-salary-options">
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="" <?php checked($current_salary, ''); ?>>
+                    <div class="inspjob-filter-options inspjob-date-options">
+                        <label class="inspjob-filter-chip <?php echo $current_date === '' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="" <?php checked($current_date, ''); ?>>
                             <span>Todos</span>
                         </label>
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '0-2000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="0-2000" <?php checked($current_salary, '0-2000'); ?>>
-                            <span>Hasta S/ 2,000</span>
+                        <label class="inspjob-filter-chip <?php echo $current_date === 'today' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="today" <?php checked($current_date, 'today'); ?>>
+                            <span>Hoy</span>
                         </label>
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '2000-4000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="2000-4000" <?php checked($current_salary, '2000-4000'); ?>>
-                            <span>S/ 2,000 - 4,000</span>
+                        <label class="inspjob-filter-chip <?php echo $current_date === '3days' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="3days" <?php checked($current_date, '3days'); ?>>
+                            <span>Últimos 3 días</span>
                         </label>
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '4000-6000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="4000-6000" <?php checked($current_salary, '4000-6000'); ?>>
-                            <span>S/ 4,000 - 6,000</span>
+                        <label class="inspjob-filter-chip <?php echo $current_date === 'week' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="week" <?php checked($current_date, 'week'); ?>>
+                            <span>Última semana</span>
                         </label>
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '6000-10000' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="6000-10000" <?php checked($current_salary, '6000-10000'); ?>>
-                            <span>S/ 6,000 - 10,000</span>
+                        <label class="inspjob-filter-chip <?php echo $current_date === '15days' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="15days" <?php checked($current_date, '15days'); ?>>
+                            <span>Últimos 15 días</span>
                         </label>
-                        <label class="inspjob-filter-chip <?php echo $current_salary === '10000+' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_salary" value="10000+" <?php checked($current_salary, '10000+'); ?>>
-                            <span>Más de S/ 10,000</span>
+                        <label class="inspjob-filter-chip <?php echo $current_date === 'month' ? 'active' : ''; ?>">
+                            <input type="radio" name="filter_date" value="month" <?php checked($current_date, 'month'); ?>>
+                            <span>Último mes</span>
                         </label>
                     </div>
                 </div>
                 <?php endif; ?>
 
-                <?php if ($atts['show_job_type'] === 'yes' && !empty($job_types) && !is_wp_error($job_types)) : ?>
-                <!-- Filtro de Tipo de Trabajo -->
-                <div class="inspjob-filter-group">
-                    <label class="inspjob-filter-label">
+                <?php if ($atts['show_remote'] === 'yes') : ?>
+                <!-- Filtro Trabajo Remoto -->
+                <div class="inspjob-filter-group inspjob-filter-remote-standalone">
+                    <label class="inspjob-filter-chip inspjob-chip-toggle <?php echo $current_remote === '1' ? 'active' : ''; ?>">
+                        <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
                         </svg>
-                        Tipo de Trabajo
+                        <span>Solo Trabajo Remoto</span>
                     </label>
-                    <div class="inspjob-filter-options inspjob-jobtype-options">
-                        <?php foreach ($job_types as $type) : ?>
-                        <label class="inspjob-filter-chip <?php echo in_array($type->slug, $current_job_types) ? 'active' : ''; ?>">
-                            <input type="checkbox" name="filter_job_type[]" value="<?php echo esc_attr($type->slug); ?>" <?php checked(in_array($type->slug, $current_job_types)); ?>>
-                            <span><?php echo esc_html($type->name); ?></span>
-                        </label>
-                        <?php endforeach; ?>
-                    </div>
                 </div>
                 <?php endif; ?>
 
@@ -1173,7 +1194,7 @@ function inspjob_filters_shortcode($atts) {
                         </svg>
                         Aplicar Filtros
                     </button>
-                    <a href="<?php echo get_permalink(get_option('job_manager_jobs_page_id')); ?>" class="inspjob-filter-btn inspjob-filter-clear">
+                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-filter-btn inspjob-filter-clear">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1186,6 +1207,32 @@ function inspjob_filters_shortcode($atts) {
     </div>
     <?php
     return ob_get_clean();
+}
+
+// Filtrar trabajos por fecha de publicación
+add_filter('job_manager_get_listings', 'inspjob_filter_by_date', 10, 2);
+function inspjob_filter_by_date($query_args, $args) {
+    if (!empty($_GET['filter_date'])) {
+        $date_filter = sanitize_text_field($_GET['filter_date']);
+
+        $date_ranges = array(
+            'today'   => 'today',
+            '3days'   => '-3 days',
+            'week'    => '-1 week',
+            '15days'  => '-15 days',
+            'month'   => '-1 month',
+        );
+
+        if (isset($date_ranges[$date_filter])) {
+            $query_args['date_query'] = array(
+                array(
+                    'after'     => $date_ranges[$date_filter],
+                    'inclusive' => true,
+                ),
+            );
+        }
+    }
+    return $query_args;
 }
 
 // Filtrar trabajos por el nuevo filtro de salario del shortcode

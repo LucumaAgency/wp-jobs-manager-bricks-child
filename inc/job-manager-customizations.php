@@ -747,14 +747,13 @@ function inspjob_form_shortcode($atts) {
                 </div>
             </div>
 
-            <!-- Filtros adicionales -->
+            <!-- Filtros adicionales en 3 columnas -->
             <?php if ($atts['show_salary'] === 'yes' || $atts['show_job_type'] === 'yes' || $atts['show_remote'] === 'yes') : ?>
             <div class="inspjob-form-filters">
-
-                <div class="inspjob-filters-row">
+                <div class="inspjob-filters-grid">
                     <?php if ($atts['show_salary'] === 'yes') : ?>
-                    <!-- Filtro Salario -->
-                    <div class="inspjob-filter-group inspjob-filter-salary">
+                    <!-- Columna 1: Salario -->
+                    <div class="inspjob-filter-column">
                         <span class="inspjob-filter-title">Salario</span>
                         <div class="inspjob-filter-chips">
                             <label class="inspjob-chip <?php echo $current_salary === '' ? 'active' : ''; ?>">
@@ -784,12 +783,10 @@ function inspjob_form_shortcode($atts) {
                         </div>
                     </div>
                     <?php endif; ?>
-                </div>
 
-                <div class="inspjob-filters-row inspjob-filters-row-type">
                     <?php if ($atts['show_job_type'] === 'yes' && !empty($job_types) && !is_wp_error($job_types)) : ?>
-                    <!-- Filtro Tipo de Trabajo -->
-                    <div class="inspjob-filter-group inspjob-filter-type">
+                    <!-- Columna 2: Tipo -->
+                    <div class="inspjob-filter-column">
                         <span class="inspjob-filter-title">Tipo</span>
                         <div class="inspjob-filter-chips">
                             <?php foreach ($job_types as $type) : ?>
@@ -803,29 +800,30 @@ function inspjob_form_shortcode($atts) {
                     <?php endif; ?>
 
                     <?php if ($atts['show_remote'] === 'yes') : ?>
-                    <!-- Filtro Remoto (como botón) -->
-                    <div class="inspjob-filter-group inspjob-filter-remote-btn">
+                    <!-- Columna 3: Remoto -->
+                    <div class="inspjob-filter-column inspjob-filter-column-remote">
+                        <span class="inspjob-filter-title">Modalidad</span>
                         <label class="inspjob-btn-remote <?php echo $current_remote === '1' ? 'active' : ''; ?>">
                             <input type="checkbox" name="filter_remote" value="1" <?php checked($current_remote, '1'); ?>>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
                             </svg>
-                            <span>Remoto</span>
+                            <span>Solo Remoto</span>
                         </label>
                     </div>
                     <?php endif; ?>
+                </div>
 
-                    <!-- Limpiar filtros -->
-                    <div class="inspjob-filter-clear-wrap">
-                        <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                            Limpiar
-                        </a>
-                    </div>
+                <!-- Limpiar filtros -->
+                <div class="inspjob-filter-clear-wrap">
+                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Limpiar filtros
+                    </a>
                 </div>
             </div>
             <?php endif; ?>

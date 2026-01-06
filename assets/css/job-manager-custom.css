@@ -2835,58 +2835,158 @@ ul.job_listings li.no_job_listings_found a:hover {
     animation: chipSelect 0.2s ease;
 }
 
-/* Filtro remoto standalone en [inspjob_filters] */
-.inspjob-filter-remote-standalone {
-    margin-left: auto;
+/* ====================================
+   [inspjob_filters] con Dropdowns
+   ==================================== */
+
+.inspjob-filters-dropdowns {
+    background: white;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0 1.5rem 0;
 }
 
-.inspjob-filter-remote-standalone .inspjob-chip-toggle {
-    display: inline-flex;
+.inspjob-filters-dropdown-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.inspjob-filter-dropdown {
+    flex: 1;
+    min-width: 180px;
+}
+
+.inspjob-filter-dropdown label {
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: #f3f4f6;
-    border: 2px solid transparent;
-    border-radius: 25px;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.inspjob-filter-dropdown label svg {
+    color: #164FC9;
+}
+
+.inspjob-filter-dropdown select {
+    width: 100%;
+    height: 44px;
+    padding: 0 2.5rem 0 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: var(--font-primary);
+    color: #1f2937;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 0.75rem center;
+    background-size: 16px;
+    appearance: none;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.inspjob-filter-remote-standalone .inspjob-chip-toggle:hover {
-    background: #EBF0FC;
+.inspjob-filter-dropdown select:hover {
     border-color: #164FC9;
 }
 
-.inspjob-filter-remote-standalone .inspjob-chip-toggle.active,
-.inspjob-filter-remote-standalone .inspjob-chip-toggle input:checked ~ span {
+.inspjob-filter-dropdown select:focus {
+    outline: none;
+    border-color: #164FC9;
+    box-shadow: 0 0 0 3px rgba(22, 79, 201, 0.1);
+}
+
+/* Botón Filtrar */
+.inspjob-filter-submit {
+    flex: 0 0 auto;
+    min-width: auto;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding-top: 1.4rem;
+}
+
+.inspjob-btn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 44px;
+    padding: 0 1.5rem;
     background: #164FC9;
-    border-color: #164FC9;
     color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.inspjob-filter-remote-standalone .inspjob-chip-toggle input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+.inspjob-btn-filter:hover {
+    background: #0F3A96;
+    transform: translateY(-1px);
 }
 
-.inspjob-filter-remote-standalone .inspjob-chip-toggle svg {
-    width: 18px;
-    height: 18px;
-}
-
-.inspjob-filter-remote-standalone .inspjob-chip-toggle span {
+.inspjob-btn-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 44px;
+    padding: 0 1rem;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.85rem;
     font-weight: 500;
-    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
 }
 
-@media (max-width: 768px) {
-    .inspjob-filter-remote-standalone {
-        margin-left: 0;
-        width: 100%;
+.inspjob-btn-clear-filters:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .inspjob-filters-dropdown-container {
+        flex-wrap: wrap;
     }
 
-    .inspjob-filter-remote-standalone .inspjob-chip-toggle {
+    .inspjob-filter-dropdown {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 150px;
+    }
+
+    .inspjob-filter-submit {
+        flex: 1 1 100%;
+        justify-content: center;
+        padding-top: 0.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .inspjob-filters-dropdowns {
+        padding: 1rem;
+    }
+
+    .inspjob-filter-dropdown {
+        flex: 1 1 100%;
+    }
+
+    .inspjob-filter-submit {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .inspjob-btn-filter,
+    .inspjob-btn-clear-filters {
         width: 100%;
         justify-content: center;
     }

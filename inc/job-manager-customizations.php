@@ -1011,6 +1011,15 @@ function inspjob_cards_shortcode($atts) {
         );
     }
 
+    // Filtro de ubicación (dropdown)
+    if (!empty($_GET['filter_location'])) {
+        $meta_query[] = array(
+            'key'     => '_job_location',
+            'value'   => sanitize_text_field($_GET['filter_location']),
+            'compare' => '='
+        );
+    }
+
     if (!empty($meta_query)) {
         $query_args['meta_query'] = $meta_query;
     }
@@ -1139,30 +1148,45 @@ function inspjob_cards_shortcode($atts) {
 
 /**
  * SHORTCODE: [inspjob_filters]
- * Filtros secundarios: Cantidad de vacantes y Fecha de publicación
+ * Filtros secundarios con dropdowns: Ubicación, Vacantes, Tiempo de publicación
  * Para usar debajo del formulario de búsqueda
  */
 add_shortcode('inspjob_filters', 'inspjob_filters_shortcode');
 function inspjob_filters_shortcode($atts) {
     $atts = shortcode_atts(array(
+        'show_location' => 'yes',
         'show_vacancies' => 'yes',
         'show_date' => 'yes',
     ), $atts);
 
     // Valores actuales de los filtros
+    $current_location = isset($_GET['filter_location']) ? sanitize_text_field($_GET['filter_location']) : '';
     $current_vacancies = isset($_GET['filter_vacancies']) ? sanitize_text_field($_GET['filter_vacancies']) : '';
     $current_date = isset($_GET['filter_date']) ? sanitize_text_field($_GET['filter_date']) : '';
 
+    // Obtener ubicaciones únicas de los trabajos publicados
+    $locations = array();
+    if ($atts['show_location'] === 'yes') {
+        global $wpdb;
+        $locations = $wpdb->get_col(
+            "SELECT DISTINCT pm.meta_value
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+            WHERE pm.meta_key = '_job_location'
+            AND pm.meta_value != ''
+            AND p.post_type = 'job_listing'
+            AND p.post_status = 'publish'
+            ORDER BY pm.meta_value ASC"
+        );
+    }
+
     ob_start();
     ?>
-    <div class="inspjob-filters-wrapper">
+    <div class="inspjob-filters-wrapper inspjob-filters-dropdowns">
         <form class="inspjob-filters-form" method="get" action="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>">
             <?php // Preservar otros parámetros de búsqueda ?>
             <?php if (isset($_GET['search_keywords'])) : ?>
                 <input type="hidden" name="search_keywords" value="<?php echo esc_attr($_GET['search_keywords']); ?>">
-            <?php endif; ?>
-            <?php if (isset($_GET['search_location'])) : ?>
-                <input type="hidden" name="search_location" value="<?php echo esc_attr($_GET['search_location']); ?>">
             <?php endif; ?>
             <?php if (isset($_GET['filter_salary'])) : ?>
                 <input type="hidden" name="filter_salary" value="<?php echo esc_attr($_GET['filter_salary']); ?>">
@@ -1176,110 +1200,116 @@ function inspjob_filters_shortcode($atts) {
                 <input type="hidden" name="filter_remote" value="<?php echo esc_attr($_GET['filter_remote']); ?>">
             <?php endif; ?>
 
-            <div class="inspjob-filters-container">
+            <div class="inspjob-filters-dropdown-container">
+                <?php if ($atts['show_location'] === 'yes' && !empty($locations)) : ?>
+                <!-- Dropdown Ubicación -->
+                <div class="inspjob-filter-dropdown">
+                    <label for="filter_location">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        Ubicación
+                    </label>
+                    <select name="filter_location" id="filter_location">
+                        <option value="">Todas las ubicaciones</option>
+                        <?php foreach ($locations as $location) : ?>
+                        <option value="<?php echo esc_attr($location); ?>" <?php selected($current_location, $location); ?>>
+                            <?php echo esc_html($location); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endif; ?>
+
                 <?php if ($atts['show_vacancies'] === 'yes') : ?>
-                <!-- Filtro de Cantidad de Vacantes -->
-                <div class="inspjob-filter-group">
-                    <label class="inspjob-filter-label">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <!-- Dropdown Vacantes -->
+                <div class="inspjob-filter-dropdown">
+                    <label for="filter_vacancies">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Cantidad de Vacantes
+                        Vacantes
                     </label>
-                    <div class="inspjob-filter-options inspjob-vacancies-options">
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="" <?php checked($current_vacancies, ''); ?>>
-                            <span>Todas</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '1' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="1" <?php checked($current_vacancies, '1'); ?>>
-                            <span>1 vacante</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '2-5' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="2-5" <?php checked($current_vacancies, '2-5'); ?>>
-                            <span>2 - 5</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '6-10' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="6-10" <?php checked($current_vacancies, '6-10'); ?>>
-                            <span>6 - 10</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '11-20' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="11-20" <?php checked($current_vacancies, '11-20'); ?>>
-                            <span>11 - 20</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_vacancies === '20+' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_vacancies" value="20+" <?php checked($current_vacancies, '20+'); ?>>
-                            <span>+20</span>
-                        </label>
-                    </div>
+                    <select name="filter_vacancies" id="filter_vacancies">
+                        <option value="">Todas</option>
+                        <option value="1" <?php selected($current_vacancies, '1'); ?>>1 vacante</option>
+                        <option value="2-5" <?php selected($current_vacancies, '2-5'); ?>>2 - 5 vacantes</option>
+                        <option value="6-10" <?php selected($current_vacancies, '6-10'); ?>>6 - 10 vacantes</option>
+                        <option value="11-20" <?php selected($current_vacancies, '11-20'); ?>>11 - 20 vacantes</option>
+                        <option value="20+" <?php selected($current_vacancies, '20+'); ?>>Más de 20</option>
+                    </select>
                 </div>
                 <?php endif; ?>
 
                 <?php if ($atts['show_date'] === 'yes') : ?>
-                <!-- Filtro de Fecha de Publicación -->
-                <div class="inspjob-filter-group">
-                    <label class="inspjob-filter-label">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <!-- Dropdown Tiempo de Publicación -->
+                <div class="inspjob-filter-dropdown">
+                    <label for="filter_date">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        Tiempo de Publicación
+                        Publicado
                     </label>
-                    <div class="inspjob-filter-options inspjob-date-options">
-                        <label class="inspjob-filter-chip <?php echo $current_date === '' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="" <?php checked($current_date, ''); ?>>
-                            <span>Todos</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_date === 'today' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="today" <?php checked($current_date, 'today'); ?>>
-                            <span>Hoy</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_date === '3days' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="3days" <?php checked($current_date, '3days'); ?>>
-                            <span>Últimos 3 días</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_date === 'week' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="week" <?php checked($current_date, 'week'); ?>>
-                            <span>Última semana</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_date === '15days' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="15days" <?php checked($current_date, '15days'); ?>>
-                            <span>Últimos 15 días</span>
-                        </label>
-                        <label class="inspjob-filter-chip <?php echo $current_date === 'month' ? 'active' : ''; ?>">
-                            <input type="radio" name="filter_date" value="month" <?php checked($current_date, 'month'); ?>>
-                            <span>Último mes</span>
-                        </label>
-                    </div>
+                    <select name="filter_date" id="filter_date">
+                        <option value="">Cualquier fecha</option>
+                        <option value="today" <?php selected($current_date, 'today'); ?>>Hoy</option>
+                        <option value="3days" <?php selected($current_date, '3days'); ?>>Últimos 3 días</option>
+                        <option value="week" <?php selected($current_date, 'week'); ?>>Última semana</option>
+                        <option value="15days" <?php selected($current_date, '15days'); ?>>Últimos 15 días</option>
+                        <option value="month" <?php selected($current_date, 'month'); ?>>Último mes</option>
+                    </select>
                 </div>
                 <?php endif; ?>
 
-                <!-- Botones de acción -->
-                <div class="inspjob-filter-actions">
-                    <button type="submit" class="inspjob-filter-btn inspjob-filter-apply">
+                <!-- Botón Aplicar -->
+                <div class="inspjob-filter-dropdown inspjob-filter-submit">
+                    <button type="submit" class="inspjob-btn-filter">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                         </svg>
-                        Aplicar Filtros
+                        Filtrar
                     </button>
-                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-filter-btn inspjob-filter-clear">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <?php
+                    $has_filters = !empty($current_location) || !empty($current_vacancies) || !empty($current_date);
+                    if ($has_filters) :
+                    ?>
+                    <a href="<?php echo esc_url(get_permalink(get_option('job_manager_jobs_page_id'))); ?>" class="inspjob-btn-clear-filters">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
                         Limpiar
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </form>
     </div>
     <?php
     return ob_get_clean();
+}
+
+// Filtrar trabajos por ubicación exacta
+add_filter('job_manager_get_listings', 'inspjob_filter_by_location_dropdown', 10, 2);
+function inspjob_filter_by_location_dropdown($query_args, $args) {
+    if (!empty($_GET['filter_location'])) {
+        if (!isset($query_args['meta_query'])) {
+            $query_args['meta_query'] = array();
+        }
+        $query_args['meta_query'][] = array(
+            'key'     => '_job_location',
+            'value'   => sanitize_text_field($_GET['filter_location']),
+            'compare' => '='
+        );
+    }
+    return $query_args;
 }
 
 // Filtrar trabajos por cantidad de vacantes

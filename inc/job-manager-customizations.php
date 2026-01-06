@@ -1037,13 +1037,11 @@ function inspjob_cards_shortcode($atts) {
         <?php endif; ?>
 
         <?php if ($jobs->have_posts()) : ?>
-        <div class="inspjob-cards-grid inspjob-cols-<?php echo intval($atts['columns']); ?>">
+        <ul class="inspjob-cards-grid inspjob-cols-<?php echo intval($atts['columns']); ?>">
             <?php while ($jobs->have_posts()) : $jobs->the_post(); ?>
-            <div class="inspjob-card-item">
                 <?php get_job_manager_template_part('content', 'job_listing'); ?>
-            </div>
             <?php endwhile; ?>
-        </div>
+        </ul>
 
         <?php if ($atts['show_pagination'] === 'yes' && $jobs->max_num_pages > 1) : ?>
         <div class="inspjob-pagination">

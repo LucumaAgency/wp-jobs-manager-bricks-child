@@ -15,7 +15,7 @@ class InspJob_Reverse_Application {
     /**
      * Custom post type name
      */
-    const POST_TYPE = 'candidate_availability';
+    const POST_TYPE = 'candidate_avail';
 
     /**
      * Meta keys

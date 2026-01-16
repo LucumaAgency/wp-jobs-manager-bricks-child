@@ -212,7 +212,7 @@ function inspjob_maybe_run_migration() {
     if (!$table_exists) {
         // Ejecutar migración
         if (class_exists('InspJob_Database_Migration')) {
-            InspJob_Database_Migration::run();
+            InspJob_Database_Migration::run_migrations();
         }
     }
 }
@@ -221,6 +221,6 @@ add_action('init', 'inspjob_maybe_run_migration', 5);
 // También ejecutar en activación del tema
 add_action('after_switch_theme', function() {
     if (class_exists('InspJob_Database_Migration')) {
-        InspJob_Database_Migration::run();
+        InspJob_Database_Migration::run_migrations();
     }
 });

@@ -1,38 +1,5 @@
 <?php
 /**
- * DEBUG - Verificar carga de archivos
- * BORRAR DESPUÉS DE DIAGNOSTICAR
- */
-error_log('=== INSPJOB DEBUG: functions.php cargado ===');
-
-// Verificar que existe el archivo de customizaciones
-$customizations_file = __DIR__ . '/inc/job-manager-customizations.php';
-if (file_exists($customizations_file)) {
-    error_log('INSPJOB: job-manager-customizations.php EXISTE');
-} else {
-    error_log('INSPJOB ERROR: job-manager-customizations.php NO EXISTE en: ' . $customizations_file);
-}
-
-// Verificar que existe class-job-seeker.php
-$job_seeker_file = __DIR__ . '/inc/class-job-seeker.php';
-if (file_exists($job_seeker_file)) {
-    error_log('INSPJOB: class-job-seeker.php EXISTE');
-} else {
-    error_log('INSPJOB ERROR: class-job-seeker.php NO EXISTE');
-}
-
-// Hook para verificar shortcodes registrados
-add_action('init', function() {
-    global $shortcode_tags;
-    if (isset($shortcode_tags['inspjob_register_job_seeker'])) {
-        error_log('INSPJOB: Shortcode inspjob_register_job_seeker REGISTRADO');
-    } else {
-        error_log('INSPJOB ERROR: Shortcode inspjob_register_job_seeker NO REGISTRADO');
-        error_log('INSPJOB: Shortcodes disponibles: ' . implode(', ', array_keys($shortcode_tags)));
-    }
-}, 999);
-
-/**
  * Register/enqueue custom scripts and styles
  */
 add_action( 'wp_enqueue_scripts', function() {

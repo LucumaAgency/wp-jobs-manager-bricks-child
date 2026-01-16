@@ -144,7 +144,7 @@ function inspjob_translate_application_form($translated, $text, $domain) {
  * ==============================
  */
 
-// Shortcode para formulario de login
+// Shortcode para formulario de login y registro
 add_shortcode('inspjob_login_form', 'inspjob_login_form_shortcode');
 function inspjob_login_form_shortcode($atts) {
     // Si ya está logueado, mostrar mensaje
@@ -152,14 +152,27 @@ function inspjob_login_form_shortcode($atts) {
         $current_user = wp_get_current_user();
         $redirect_url = isset($_GET['redirect_to']) ? esc_url($_GET['redirect_to']) : home_url();
 
+        // Determinar dashboard según rol
+        if (in_array('job_seeker', (array) $current_user->roles)) {
+            $dashboard_url = home_url('/mi-dashboard/');
+            $dashboard_text = 'Ir a mi Dashboard';
+        } elseif (in_array('employer', (array) $current_user->roles)) {
+            $dashboard_url = home_url('/employer-dashboard/');
+            $dashboard_text = 'Ir a mi Panel de Empleador';
+        } else {
+            $dashboard_url = $redirect_url;
+            $dashboard_text = 'Continuar';
+        }
+
         return '<div class="inspjob-login-logged-in">
             <p>Hola, <strong>' . esc_html($current_user->display_name) . '</strong>. Ya has iniciado sesión.</p>
-            <p><a href="' . esc_url($redirect_url) . '" class="btn-primary">Continuar</a></p>
+            <p><a href="' . esc_url($dashboard_url) . '" class="inspjob-btn inspjob-btn-primary">' . $dashboard_text . '</a></p>
         </div>';
     }
 
     $atts = shortcode_atts(array(
         'redirect' => '',
+        'default_tab' => 'login', // login o register
     ), $atts);
 
     // Obtener URL de redirección
@@ -171,44 +184,297 @@ function inspjob_login_form_shortcode($atts) {
         $redirect_to = home_url();
     }
 
-    // Mensajes de error
-    $error_message = '';
+    // Tab activo
+    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : $atts['default_tab'];
+
+    // Mensajes de error/éxito
+    $message = '';
     if (isset($_GET['login']) && $_GET['login'] === 'failed') {
-        $error_message = '<div class="inspjob-login-error">Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.</div>';
+        $message = '<div class="inspjob-alert inspjob-alert-error">Usuario o contraseña incorrectos.</div>';
     }
     if (isset($_GET['logged_out']) && $_GET['logged_out'] === 'true') {
-        $error_message = '<div class="inspjob-login-success">Has cerrado sesión correctamente.</div>';
+        $message = '<div class="inspjob-alert inspjob-alert-success">Has cerrado sesión correctamente.</div>';
+    }
+    if (isset($_GET['registered']) && $_GET['registered'] === 'success') {
+        $message = '<div class="inspjob-alert inspjob-alert-success">¡Cuenta creada! Ya puedes iniciar sesión.</div>';
+        $active_tab = 'login';
+    }
+    if (isset($_GET['error'])) {
+        $error_messages = [
+            'email_exists' => 'Este correo ya está registrado.',
+            'username_exists' => 'Este nombre de usuario ya existe.',
+            'invalid_email' => 'Por favor ingresa un correo válido.',
+            'weak_password' => 'La contraseña es muy débil.',
+            'password_mismatch' => 'Las contraseñas no coinciden.',
+            'missing_fields' => 'Por favor completa todos los campos requeridos.',
+        ];
+        $error_key = sanitize_text_field($_GET['error']);
+        $message = '<div class="inspjob-alert inspjob-alert-error">' . ($error_messages[$error_key] ?? 'Ocurrió un error.') . '</div>';
+        $active_tab = 'register';
     }
 
-    // Formulario de login
-    $form = '<div class="inspjob-login-form-wrapper">
-        ' . $error_message . '
-        <form name="loginform" id="inspjob-loginform" action="' . esc_url(site_url('wp-login.php', 'login_post')) . '" method="post" class="inspjob-login-form">
-            <div class="form-field">
-                <label for="user_login">Correo electrónico o usuario</label>
-                <input type="text" name="log" id="user_login" class="input" required />
-            </div>
-            <div class="form-field">
-                <label for="user_pass">Contraseña</label>
-                <input type="password" name="pwd" id="user_pass" class="input" required />
-            </div>
-            <div class="form-field form-field-remember">
-                <label>
-                    <input name="rememberme" type="checkbox" id="rememberme" value="forever" /> Recordarme
-                </label>
-            </div>
-            <div class="form-field form-field-submit">
-                <input type="submit" name="wp-submit" id="wp-submit" class="btn-primary" value="Iniciar Sesión" />
-                <input type="hidden" name="redirect_to" value="' . esc_attr($redirect_to) . '" />
-            </div>
-        </form>
-        <div class="inspjob-login-links">
-            <a href="' . esc_url(wp_lostpassword_url($redirect_to)) . '">¿Olvidaste tu contraseña?</a>
-            ' . (get_option('users_can_register') ? '<a href="' . esc_url(wp_registration_url()) . '">Crear una cuenta</a>' : '') . '
-        </div>
-    </div>';
+    ob_start();
+    ?>
+    <div class="inspjob-auth-wrapper">
+        <?php echo $message; ?>
 
-    return $form;
+        <!-- Tabs -->
+        <div class="inspjob-auth-tabs">
+            <button type="button" class="auth-tab <?php echo $active_tab === 'login' ? 'active' : ''; ?>" data-tab="login">
+                Iniciar Sesión
+            </button>
+            <button type="button" class="auth-tab <?php echo $active_tab === 'register' ? 'active' : ''; ?>" data-tab="register">
+                Crear Cuenta
+            </button>
+        </div>
+
+        <!-- Login Form -->
+        <div class="auth-panel <?php echo $active_tab === 'login' ? 'active' : ''; ?>" id="panel-login">
+            <form name="loginform" id="inspjob-loginform" action="<?php echo esc_url(site_url('wp-login.php', 'login_post')); ?>" method="post" class="inspjob-auth-form">
+                <div class="inspjob-form-group">
+                    <label for="user_login">Correo electrónico o usuario</label>
+                    <input type="text" name="log" id="user_login" required />
+                </div>
+                <div class="inspjob-form-group">
+                    <label for="user_pass">Contraseña</label>
+                    <input type="password" name="pwd" id="user_pass" required />
+                </div>
+                <div class="inspjob-form-group inspjob-form-row">
+                    <label class="inspjob-checkbox">
+                        <input name="rememberme" type="checkbox" value="forever" />
+                        <span>Recordarme</span>
+                    </label>
+                    <a href="<?php echo esc_url(wp_lostpassword_url($redirect_to)); ?>" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                </div>
+                <input type="hidden" name="redirect_to" value="<?php echo esc_attr($redirect_to); ?>" />
+                <button type="submit" class="inspjob-btn inspjob-btn-primary inspjob-btn-block">Iniciar Sesión</button>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div class="auth-panel <?php echo $active_tab === 'register' ? 'active' : ''; ?>" id="panel-register">
+            <form id="inspjob-register-form" action="" method="post" class="inspjob-auth-form">
+                <?php wp_nonce_field('inspjob_register_user', 'register_nonce'); ?>
+                <input type="hidden" name="action" value="inspjob_register_user" />
+                <input type="hidden" name="redirect_to" value="<?php echo esc_attr($redirect_to); ?>" />
+
+                <!-- Tipo de cuenta -->
+                <div class="inspjob-form-group">
+                    <label>¿Qué tipo de cuenta deseas crear?</label>
+                    <div class="inspjob-role-selector">
+                        <label class="role-option">
+                            <input type="radio" name="user_role" value="job_seeker" checked />
+                            <div class="role-card">
+                                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="role-title">Busco Trabajo</span>
+                                <span class="role-desc">Quiero encontrar oportunidades laborales</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="user_role" value="employer" />
+                            <div class="role-card">
+                                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span class="role-title">Ofrezco Trabajo</span>
+                                <span class="role-desc">Quiero publicar ofertas de empleo</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="inspjob-form-row-2">
+                    <div class="inspjob-form-group">
+                        <label for="reg_first_name">Nombre *</label>
+                        <input type="text" name="first_name" id="reg_first_name" required />
+                    </div>
+                    <div class="inspjob-form-group">
+                        <label for="reg_last_name">Apellido *</label>
+                        <input type="text" name="last_name" id="reg_last_name" required />
+                    </div>
+                </div>
+
+                <div class="inspjob-form-group">
+                    <label for="reg_email">Correo electrónico *</label>
+                    <input type="email" name="email" id="reg_email" required />
+                </div>
+
+                <div class="inspjob-form-group">
+                    <label for="reg_password">Contraseña *</label>
+                    <input type="password" name="password" id="reg_password" minlength="8" required />
+                    <span class="field-hint">Mínimo 8 caracteres</span>
+                </div>
+
+                <div class="inspjob-form-group">
+                    <label for="reg_password_confirm">Confirmar contraseña *</label>
+                    <input type="password" name="password_confirm" id="reg_password_confirm" required />
+                </div>
+
+                <div class="inspjob-form-group">
+                    <label class="inspjob-checkbox">
+                        <input type="checkbox" name="terms" required />
+                        <span>Acepto los <a href="<?php echo home_url('/terminos-y-condiciones/'); ?>" target="_blank">términos y condiciones</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="inspjob-btn inspjob-btn-primary inspjob-btn-block">Crear Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching
+        document.querySelectorAll('.auth-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                var targetTab = this.dataset.tab;
+
+                // Update tabs
+                document.querySelectorAll('.auth-tab').forEach(function(t) {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // Update panels
+                document.querySelectorAll('.auth-panel').forEach(function(panel) {
+                    panel.classList.remove('active');
+                });
+                document.getElementById('panel-' + targetTab).classList.add('active');
+
+                // Update URL without reload
+                var url = new URL(window.location);
+                url.searchParams.set('tab', targetTab);
+                history.replaceState(null, '', url);
+            });
+        });
+
+        // Role selector visual feedback
+        document.querySelectorAll('.role-option input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                document.querySelectorAll('.role-option').forEach(function(opt) {
+                    opt.classList.remove('selected');
+                });
+                this.closest('.role-option').classList.add('selected');
+            });
+
+            // Set initial state
+            if (input.checked) {
+                input.closest('.role-option').classList.add('selected');
+            }
+        });
+    });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+
+// AJAX handler para registro de usuarios
+add_action('init', 'inspjob_handle_user_registration');
+function inspjob_handle_user_registration() {
+    if (!isset($_POST['action']) || $_POST['action'] !== 'inspjob_register_user') {
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['register_nonce'] ?? '', 'inspjob_register_user')) {
+        wp_redirect(add_query_arg('error', 'invalid_nonce', wp_get_referer()));
+        exit;
+    }
+
+    $first_name = sanitize_text_field($_POST['first_name'] ?? '');
+    $last_name = sanitize_text_field($_POST['last_name'] ?? '');
+    $email = sanitize_email($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $password_confirm = $_POST['password_confirm'] ?? '';
+    $user_role = sanitize_text_field($_POST['user_role'] ?? 'job_seeker');
+    $redirect_to = esc_url($_POST['redirect_to'] ?? home_url());
+
+    // Validaciones
+    if (empty($first_name) || empty($last_name) || empty($email) || empty($password)) {
+        wp_redirect(add_query_arg('error', 'missing_fields', wp_get_referer()));
+        exit;
+    }
+
+    if (!is_email($email)) {
+        wp_redirect(add_query_arg('error', 'invalid_email', wp_get_referer()));
+        exit;
+    }
+
+    if (email_exists($email)) {
+        wp_redirect(add_query_arg('error', 'email_exists', wp_get_referer()));
+        exit;
+    }
+
+    if ($password !== $password_confirm) {
+        wp_redirect(add_query_arg('error', 'password_mismatch', wp_get_referer()));
+        exit;
+    }
+
+    if (strlen($password) < 8) {
+        wp_redirect(add_query_arg('error', 'weak_password', wp_get_referer()));
+        exit;
+    }
+
+    // Crear username desde email
+    $username = sanitize_user(current(explode('@', $email)), true);
+    $base_username = $username;
+    $counter = 1;
+    while (username_exists($username)) {
+        $username = $base_username . $counter;
+        $counter++;
+    }
+
+    // Validar rol
+    $allowed_roles = ['job_seeker', 'employer'];
+    if (!in_array($user_role, $allowed_roles)) {
+        $user_role = 'job_seeker';
+    }
+
+    // Crear usuario
+    $user_data = [
+        'user_login'    => $username,
+        'user_email'    => $email,
+        'user_pass'     => $password,
+        'first_name'    => $first_name,
+        'last_name'     => $last_name,
+        'display_name'  => $first_name . ' ' . $last_name,
+        'role'          => $user_role,
+    ];
+
+    $user_id = wp_insert_user($user_data);
+
+    if (is_wp_error($user_id)) {
+        wp_redirect(add_query_arg('error', 'registration_failed', wp_get_referer()));
+        exit;
+    }
+
+    // Inicializar datos según rol
+    if ($user_role === 'job_seeker') {
+        // Inicializar perfil de job seeker
+        update_user_meta($user_id, '_job_seeker_profile_completion', 20);
+        update_user_meta($user_id, '_job_seeker_level', 'bronze');
+        update_user_meta($user_id, '_job_seeker_points', 0);
+
+        // Enviar a completar perfil
+        $redirect_to = home_url('/mi-perfil/');
+    } else {
+        // Empleador - enviar al dashboard de empleador
+        $redirect_to = home_url('/employer-dashboard/');
+    }
+
+    // Enviar email de bienvenida
+    wp_new_user_notification($user_id, null, 'user');
+
+    // Auto-login
+    wp_set_current_user($user_id);
+    wp_set_auth_cookie($user_id);
+
+    // Redirigir con mensaje de éxito
+    wp_redirect($redirect_to);
+    exit;
 }
 
 // Redirigir wp-login.php a página personalizada (solo para usuarios no admin)

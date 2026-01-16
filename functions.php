@@ -1,4 +1,37 @@
-<?php 
+<?php
+/**
+ * DEBUG - Verificar carga de archivos
+ * BORRAR DESPUÉS DE DIAGNOSTICAR
+ */
+error_log('=== INSPJOB DEBUG: functions.php cargado ===');
+
+// Verificar que existe el archivo de customizaciones
+$customizations_file = __DIR__ . '/inc/job-manager-customizations.php';
+if (file_exists($customizations_file)) {
+    error_log('INSPJOB: job-manager-customizations.php EXISTE');
+} else {
+    error_log('INSPJOB ERROR: job-manager-customizations.php NO EXISTE en: ' . $customizations_file);
+}
+
+// Verificar que existe class-job-seeker.php
+$job_seeker_file = __DIR__ . '/inc/class-job-seeker.php';
+if (file_exists($job_seeker_file)) {
+    error_log('INSPJOB: class-job-seeker.php EXISTE');
+} else {
+    error_log('INSPJOB ERROR: class-job-seeker.php NO EXISTE');
+}
+
+// Hook para verificar shortcodes registrados
+add_action('init', function() {
+    global $shortcode_tags;
+    if (isset($shortcode_tags['inspjob_register_job_seeker'])) {
+        error_log('INSPJOB: Shortcode inspjob_register_job_seeker REGISTRADO');
+    } else {
+        error_log('INSPJOB ERROR: Shortcode inspjob_register_job_seeker NO REGISTRADO');
+        error_log('INSPJOB: Shortcodes disponibles: ' . implode(', ', array_keys($shortcode_tags)));
+    }
+}, 999);
+
 /**
  * Register/enqueue custom scripts and styles
  */
@@ -165,3 +198,29 @@ add_filter( 'bricks/builder/save_messages', function( $messages ) {
 
 // Incluir el archivo de personalizaciones de WP Job Manager
 require_once get_stylesheet_directory() . '/inc/job-manager-customizations.php';
+
+/**
+ * Ejecutar migración de base de datos en activación del tema
+ * o cuando se detecta que las tablas no existen
+ */
+function inspjob_maybe_run_migration() {
+    global $wpdb;
+
+    // Verificar si las tablas ya existen
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}inspjob_applications'");
+
+    if (!$table_exists) {
+        // Ejecutar migración
+        if (class_exists('InspJob_Database_Migration')) {
+            InspJob_Database_Migration::run();
+        }
+    }
+}
+add_action('init', 'inspjob_maybe_run_migration', 5);
+
+// También ejecutar en activación del tema
+add_action('after_switch_theme', function() {
+    if (class_exists('InspJob_Database_Migration')) {
+        InspJob_Database_Migration::run();
+    }
+});

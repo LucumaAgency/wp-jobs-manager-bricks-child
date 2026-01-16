@@ -47,7 +47,13 @@ function inspjob_bricks_job_manager_assets() {
         // Localizar script para AJAX
         wp_localize_script('inspjob-job-manager-js', 'inspjob_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('inspjob_nonce')
+            'nonce' => wp_create_nonce('inspjob_nonce'),
+            'apply_nonce' => wp_create_nonce('inspjob_apply'),
+            'profile_nonce' => wp_create_nonce('inspjob_update_profile'),
+            'my_applications_nonce' => wp_create_nonce('inspjob_my_applications'),
+            'manage_applications_nonce' => wp_create_nonce('inspjob_manage_applications'),
+            'availability_nonce' => wp_create_nonce('inspjob_availability'),
+            'dashboard_url' => home_url('/mi-dashboard/'),
         ));
     }
 }
@@ -1554,4 +1560,31 @@ function inspjob_bricks_labels($i18n) {
     $i18n['inspjob'] = 'InspJobPortal';
     return $i18n;
 }
+
+/**
+ * CARGAR CLASES ADICIONALES DEL SISTEMA
+ * ======================================
+ */
+
+// Database Migration - Must load first
+require_once get_stylesheet_directory() . '/inc/database-migration.php';
+
+// Core Classes
+require_once get_stylesheet_directory() . '/inc/class-job-seeker.php';
+require_once get_stylesheet_directory() . '/inc/class-application-tracker.php';
+require_once get_stylesheet_directory() . '/inc/class-matching-engine.php';
+require_once get_stylesheet_directory() . '/inc/class-salary-transparency.php';
+require_once get_stylesheet_directory() . '/inc/class-employer-score.php';
+
+// Anti-Ghosting System
+require_once get_stylesheet_directory() . '/inc/class-sla-commitment.php';
+require_once get_stylesheet_directory() . '/inc/class-application-timeline.php';
+require_once get_stylesheet_directory() . '/inc/class-ghost-cleanup.php';
+
+// Gamification and Reverse Applications
+require_once get_stylesheet_directory() . '/inc/class-gamification.php';
+require_once get_stylesheet_directory() . '/inc/class-reverse-application.php';
+
+// Email Notifications
+require_once get_stylesheet_directory() . '/inc/email-notifications.php';
 ?>
